@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 성장 연대기 - 어린이 능력치 도감</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nanum+Gothic', sans-serif;
+            background-color: #f8fafc;
+            touch-action: manipulation;
+        }
+        .stat-box {
+            transition: all 0.2s ease;
+        }
+        .stat-box:hover {
+            transform: scale(1.05);
+        }
+        .active-stat {
+            background-color: #fbbf24 !important; /* 노란색 활성화 */
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+        .character-container {
+            filter: drop-shadow(0 20px 25px rgba(0,0,0,0.1));
+        }
+        /* 부드러운 호흡 애니메이션 */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .animate-breathe {
+            animation: breathe 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 text-slate-800">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- 상단 헤더 -->
+        <header class="flex justify-between items-center mb-8 bg-white p-5 rounded-3xl shadow-sm border border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-500 p-2 rounded-2xl shadow-lg shadow-indigo-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900">나의 성장 연대기</h1>
+                    <p class="text-xs text-slate-400 font-bold tracking-tight">4학년 어린이들의 꿈과 능력치 도감</p>
+                </div>
+            </div>
+            
+            <!-- QR 코드 섹션 -->
+            <div id="qr-container" class="relative group cursor-pointer">
+                <div class="bg-slate-50 p-2 rounded-xl hover:bg-slate-100 transition-colors border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M17 21h.01"/></svg>
+                </div>
+                <div class="hidden group-hover:block absolute right-0 top-12 bg-white p-4 rounded-2xl shadow-2xl z-50 border border-slate-200 w-48 text-center">
+                    <div id="qr-placeholder" class="bg-slate-100 w-full aspect-square mb-2 rounded-lg flex items-center justify-center text-xs text-slate-400">QR 코드 생성 중...</div>
+                    <p class="text-xs font-bold text-slate-600">태블릿으로 바로 접속!</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- 왼쪽: 캐릭터 및 분석 섹션 -->
+            <section class="lg:col-span-5 flex flex-col gap-6">
+                <!-- 캐릭터 창 -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
+                    <h2 class="text-xl font-bold text-slate-700 mb-6 flex items-center gap-2">
+                        <span class="text-2xl">😊</span> 오늘의 내 모습
+                    </h2>
+                    
+                    <div class="relative bg-slate-50 rounded-3xl p-6 mb-8 flex flex-col items-center justify-center min-h-[380px]">
+                        <div id="character-display" class="w-full max-w-[260px] h-auto animate-breathe character-container">
+                            <!-- JS에서 성별에 따른 고퀄리티 SVG 렌더링 -->
+                        </div>
+                        
+                        <div class="mt-8 w-full relative">
+                            <label class="absolute -top-3 left-4 bg-white px-2 text-[10px] font-bold text-indigo-500 uppercase tracking-wider">나의 이름</label>
+                            <input type="text" id="user-name" placeholder="여기에 이름을 써줘!" class="w-full text-center py-4 bg-white rounded-2xl text-2xl font-extrabold text-slate-800 border-2 border-slate-200 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="changeGender('boy')" id="btn-boy" class="group relative py-4 rounded-2xl border-2 transition-all overflow-hidden">
+                            <div id="btn-boy-bg" class="absolute inset-0 bg-blue-500 opacity-0 transition-opacity"></div>
+                            <span id="btn-boy-text" class="relative z-10 font-bold text-blue-500">남자아이</span>
+                        </button>
+                        <button onclick="changeGender('girl')" id="btn-girl" class="group relative py-4 rounded-2xl border-2 transition-all overflow-hidden">
+                            <div id="btn-girl-bg" class="absolute inset-0 bg-pink-500 opacity-0 transition-opacity"></div>
+                            <span id="btn-girl-text" class="relative z-10 font-bold text-pink-500">여자아이</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 분석 창: 강점/약점/극복 -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 space-y-6">
+                    <div>
+                        <h3 class="text-sm font-black text-blue-600 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-[10px]">UP</span> 
+                            나의 강점 TOP 3
+                        </h3>
+                        <div id="strength-list" class="flex flex-wrap gap-2">
+                            <!-- JS에서 자동 생성 -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-black text-rose-500 mb-3 flex items-center gap-2">
+                            <span class="w-6 h-6 bg-rose-100 rounded-full flex items-center justify-center text-[10px]">DN</span> 
+                            나의 부족한 점 BOTTOM 3
+                        </h3>
+                        <div id="weakness-list" class="flex flex-wrap gap-2">
+                            <!-- JS에서 자동 생성 -->
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <h3 class="text-sm font-black text-slate-700 mb-3 flex items-center gap-2 italic">
+                            🚀 멋지게 극복하기!
+                        </h3>
+                        <textarea id="overcoming-text" placeholder="부족한 점을 어떻게 채워나갈 수 있을까? 나의 다짐을 적어보자!" class="w-full h-24 p-4 bg-slate-50 rounded-2xl text-sm text-slate-600 border-2 border-transparent focus:border-indigo-300 focus:bg-white outline-none resize-none transition-all"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 오른쪽: 능력치 및 저장소 -->
+            <section class="lg:col-span-7 space-y-6">
+                <!-- 능력치 패널 -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-800">📊 나의 성장 그래프</h2>
+                            <p class="text-sm text-slate-400 mt-1">능력치 이름을 눌러서 바꿀 수 있어!</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- 학습 영역 -->
+                        <div class="space-y-4">
+                            <h3 class="flex items-center gap-2 font-bold text-blue-600"><span class="p-1.5 bg-blue-50 rounded-lg">📖</span> 학습 역량</h3>
+                            <div id="stats-learning" class="space-y-5"></div>
+                        </div>
+                        <!-- 관계 영역 -->
+                        <div class="space-y-4">
+                            <h3 class="flex items-center gap-2 font-bold text-pink-600"><span class="p-1.5 bg-pink-50 rounded-lg">🤝</span> 관계 형성</h3>
+                            <div id="stats-relationship" class="space-y-5"></div>
+                        </div>
+                        <!-- 신체 영역 -->
+                        <div class="space-y-4">
+                            <h3 class="flex items-center gap-2 font-bold text-emerald-600"><span class="p-1.5 bg-emerald-50 rounded-lg">🏃</span> 신체 건강</h3>
+                            <div id="stats-body" class="space-y-5"></div>
+                        </div>
+                        <!-- 마음 영역 -->
+                        <div class="space-y-4">
+                            <h3 class="flex items-center gap-2 font-bold text-orange-600"><span class="p-1.5 bg-orange-50 rounded-lg">🧡</span> 마음 챙김</h3>
+                            <div id="stats-mind" class="space-y-5"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 저장소 패널 -->
+                <div class="bg-slate-900 rounded-3xl p-8 shadow-2xl text-white">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2">💾 성장 저장소</h2>
+                            <p class="text-xs text-slate-400 mt-1">기록을 남기면 나중에 다시 볼 수 있어!</p>
+                        </div>
+                        <button onclick="saveToCurrentSlot()" class="w-full md:w-auto px-10 py-4 bg-indigo-500 hover:bg-indigo-400 text-white font-black rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all active:scale-95">지금 모습 저장</button>
+                    </div>
+                    
+                    <div id="save-slots" class="grid grid-cols-5 gap-3"></div>
+                </div>
+            </section>
+        </div>
+        
+        <footer class="mt-12 text-center text-slate-400 text-xs font-medium pb-8">
+            &copy; 나의 성장 연대기 &middot; 초등학교 4학년 수업용 웹앱
+        </footer>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 px-8 py-4 bg-slate-800 text-white font-bold rounded-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 shadow-2xl border border-slate-700">
+        메시지
+    </div>
+
+    <script>
+        /**
+         * 1. 초기 상태 정의
+         */
+        let currentCharacter = {
+            gender: 'boy',
+            name: '',
+            overcoming: '',
+            stats: {
+                learning: [ {name: '집중하는 힘', val: 5}, {name: '스스로 공부', val: 5}, {name: '책 읽는 즐거움', val: 5} ],
+                relationship: [ {name: '친구 배려하기', val: 5}, {name: '자신있게 발표', val: 5}, {name: '도움 주고받기', val: 5} ],
+                body: [ {name: '튼튼한 체력', val: 5}, {name: '골고루 먹기', val: 5}, {name: '운동 즐기기', val: 5} ],
+                mind: [ {name: '나를 사랑하기', val: 5}, {name: '긍정적인 마음', val: 5}, {name: '꾹 참는 인내심', val: 5} ]
+            }
+        };
+
+        const STORAGE_KEY = 'GROWTH_CHRONICLE_V4';
+
+        /**
+         * 2. 캐릭터 렌더링 (SVG)
+         */
+        function renderCharacter() {
+            const container = document.getElementById('character-display');
+            const g = currentCharacter.gender;
+
+            const boySvg = `
+            <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                <path d="M120 180 Q100 150 120 100 Q150 50 200 50 Q250 50 280 100 Q300 150 280 180" fill="#2d2d2d" />
+                <rect x="185" y="280" width="30" height="40" fill="#fbd38d" />
+                <path d="M130 150 Q130 100 200 100 Q270 100 270 150 L270 230 Q270 300 200 300 Q130 300 130 230 Z" fill="#fbd38d" />
+                <path d="M165 185 Q175 178 185 185" stroke="#1a202c" stroke-width="3" fill="none" />
+                <path d="M215 185 Q225 178 235 185" stroke="#1a202c" stroke-width="3" fill="none" />
+                <path d="M175 240 Q200 275 225 240" stroke="#1a202c" stroke-width="4" fill="none" stroke-linecap="round" />
+                <path d="M130 150 Q130 110 200 110 Q270 110 270 150 L270 120 Q240 80 200 85 Q160 80 130 120 Z" fill="#2d2d2d" />
+                <circle cx="125" cy="190" r="12" fill="#fbd38d" />
+                <circle cx="275" cy="190" r="12" fill="#fbd38d" />
+                <path d="M120 320 Q200 300 280 320 L310 480 H90 Z" fill="#4299e1" />
+                <path d="M180 320 L200 340 L220 320" stroke="white" stroke-width="2" fill="none" opacity="0.3" />
+            </svg>`;
+
+            const girlSvg = `
+            <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                <path d="M110 100 Q110 50 200 50 Q290 50 290 100 L310 380 Q200 400 90 380 Z" fill="#382218" />
+                <rect x="185" y="280" width="30" height="40" fill="#ffe3bc" />
+                <path d="M130 150 Q130 100 200 100 Q270 100 270 150 L270 230 Q270 300 200 300 Q130 300 130 230 Z" fill="#ffe3bc" />
+                <path d="M165 188 Q175 180 185 188" stroke="#1a202c" stroke-width="3" fill="none" />
+                <path d="M215 188 Q225 180 235 188" stroke="#1a202c" stroke-width="3" fill="none" />
+                <path d="M175 240 Q200 275 225 240" stroke="#e53e3e" stroke-width="4" fill="none" stroke-linecap="round" />
+                <path d="M130 150 Q130 105 200 105 Q270 105 270 150 L270 130 Q250 90 200 90 Q150 90 130 130 Z" fill="#382218" />
+                <path d="M120 320 Q200 300 280 320 L310 480 H90 Z" fill="#f687b3" />
+                <circle cx="200" cy="360" r="4" fill="white" opacity="0.5" />
+            </svg>`;
+
+            container.innerHTML = g === 'boy' ? boySvg : girlSvg;
+        }
+
+        /**
+         * 3. 능력치 UI 생성 (수정 가능하게 업데이트)
+         */
+        function renderStats() {
+            const cats = ['learning', 'relationship', 'body', 'mind'];
+            cats.forEach(cat => {
+                const el = document.getElementById(`stats-${cat}`);
+                el.innerHTML = '';
+                currentCharacter.stats[cat].forEach((item, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'space-y-2';
+                    row.innerHTML = `
+                        <div class="flex justify-between items-center px-1">
+                            <!-- 수정 가능한 입력창 -->
+                            <input type="text" value="${item.name}" 
+                                oninput="updateStatName('${cat}', ${idx}, this.value)"
+                                class="text-sm font-bold text-slate-600 bg-transparent border-b border-dashed border-slate-300 focus:border-indigo-400 outline-none w-32 transition-colors"
+                                title="이름을 눌러서 고쳐봐!">
+                            <span class="text-[10px] font-black text-slate-300 tracking-tighter">${item.val} / 10</span>
+                        </div>
+                        <div class="flex gap-1.5 h-7">
+                            ${Array.from({length: 10}, (_, i) => `
+                                <div onclick="updateStatValue('${cat}', ${idx}, ${i + 1})"
+                                     class="stat-box flex-1 rounded-md bg-slate-100 cursor-pointer border border-transparent ${i < item.val ? 'active-stat' : ''}">
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    el.appendChild(row);
+                });
+            });
+            updateAnalysis();
+        }
+
+        /**
+         * 4. 데이터 실시간 업데이트 함수
+         */
+        function updateStatName(cat, idx, newName) {
+            currentCharacter.stats[cat][idx].name = newName;
+            updateAnalysis(); // 강점/약점 분석 텍스트도 실시간으로 바뀜
+        }
+
+        function updateStatValue(cat, idx, val) {
+            currentCharacter.stats[cat][idx].val = val;
+            renderStats();
+        }
+
+        /**
+         * 5. 강점 및 부족한 점 자동 분석
+         */
+        function updateAnalysis() {
+            const allStats = [];
+            Object.keys(currentCharacter.stats).forEach(cat => {
+                currentCharacter.stats[cat].forEach(item => {
+                    allStats.push({ name: item.name, val: item.val });
+                });
+            });
+
+            const sorted = [...allStats].sort((a, b) => b.val - a.val);
+            
+            const strengths = sorted.slice(0, 3);
+            const strengthEl = document.getElementById('strength-list');
+            strengthEl.innerHTML = strengths.map(s => `
+                <span class="px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-xl border border-blue-100 shadow-sm">
+                    ${s.name} (${s.val})
+                </span>
+            `).join('');
+
+            const weaknesses = [...sorted].reverse().slice(0, 3);
+            const weaknessEl = document.getElementById('weakness-list');
+            weaknessEl.innerHTML = weaknesses.map(w => `
+                <span class="px-3 py-1.5 bg-rose-50 text-rose-600 text-xs font-bold rounded-xl border border-rose-100 shadow-sm">
+                    ${w.name} (${w.val})
+                </span>
+            `).join('');
+        }
+
+        /**
+         * 6. 기타 인터랙션 및 저장 기능
+         */
+        function changeGender(g) {
+            currentCharacter.gender = g;
+            updateGenderButtons();
+            renderCharacter();
+        }
+
+        function updateGenderButtons() {
+            const isBoy = currentCharacter.gender === 'boy';
+            document.getElementById('btn-boy').style.borderColor = isBoy ? '#3b82f6' : '#e2e8f0';
+            document.getElementById('btn-boy-bg').style.opacity = isBoy ? '1' : '0';
+            document.getElementById('btn-boy-text').className = isBoy ? 'relative z-10 font-bold text-white' : 'relative z-10 font-bold text-blue-500';
+            document.getElementById('btn-girl').style.borderColor = !isBoy ? '#ec4899' : '#e2e8f0';
+            document.getElementById('btn-girl-bg').style.opacity = !isBoy ? '1' : '0';
+            document.getElementById('btn-girl-text').className = !isBoy ? 'relative z-10 font-bold text-white' : 'relative z-10 font-bold text-pink-500';
+        }
+
+        function initSaveSlots() {
+            const container = document.getElementById('save-slots');
+            container.innerHTML = '';
+            const saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+            for (let i = 0; i < 5; i++) {
+                const data = saves[i];
+                const btn = document.createElement('button');
+                btn.className = `aspect-square rounded-2xl border-2 flex flex-col items-center justify-center p-2 transition-all hover:border-indigo-400 ${data ? 'border-indigo-500 bg-slate-800' : 'border-dashed border-slate-700 bg-transparent opacity-40'}`;
+                
+                if (data) {
+                    btn.innerHTML = `
+                        <div class="w-8 h-8 mb-1">
+                            ${data.gender === 'boy' ? 
+                                '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#4299e1"/></svg>' : 
+                                '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#f687b3"/></svg>'}
+                        </div>
+                        <span class="text-[10px] font-bold truncate w-full text-center">${data.name}</span>
+                    `;
+                    btn.onclick = () => loadFromSlot(i);
+                } else {
+                    btn.innerHTML = `<span class="text-xl font-light text-slate-500">+</span>`;
+                    btn.onclick = () => saveToSlot(i);
+                }
+                container.appendChild(btn);
+            }
+        }
+
+        function saveToCurrentSlot() {
+            const name = document.getElementById('user-name').value;
+            if (!name) {
+                showToast("앗! 이름을 먼저 알려줘.");
+                document.getElementById('user-name').focus();
+                return;
+            }
+            const saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const nextIdx = saves.length < 5 ? saves.length : 0;
+            saveToSlot(nextIdx);
+        }
+
+        function saveToSlot(idx) {
+            const name = document.getElementById('user-name').value;
+            if (!name) return;
+            let saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            currentCharacter.name = name;
+            currentCharacter.overcoming = document.getElementById('overcoming-text').value;
+            saves[idx] = JSON.parse(JSON.stringify(currentCharacter));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(saves));
+            showToast(`${idx + 1}번 칸에 저장했어! 장하다 ${name}!`);
+            initSaveSlots();
+        }
+
+        function loadFromSlot(idx) {
+            const saves = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (saves[idx]) {
+                currentCharacter = JSON.parse(JSON.stringify(saves[idx]));
+                document.getElementById('user-name').value = currentCharacter.name;
+                document.getElementById('overcoming-text').value = currentCharacter.overcoming || '';
+                renderCharacter();
+                renderStats();
+                updateGenderButtons();
+                showToast(`${currentCharacter.name}의 기록을 불러왔어.`);
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.transform = 'translate(-50%, -10px)';
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translate(-50%, 0px)';
+            }, 2500);
+        }
+
+        window.onload = () => {
+            renderCharacter();
+            renderStats();
+            updateGenderButtons();
+            initSaveSlots();
+            
+            const qrPlaceholder = document.getElementById('qr-placeholder');
+            const url = encodeURIComponent(window.location.href);
+            qrPlaceholder.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${url}" class="w-full h-full rounded-lg">`;
+
+            document.getElementById('overcoming-text').addEventListener('input', (e) => {
+                currentCharacter.overcoming = e.target.value;
+            });
+        };
+    </script>
+</body>
+</html>
