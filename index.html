@@ -3,460 +3,512 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>약점 연금술 상점</title>
+    <title>역할극 대본 생성기 - 전학년 교과서 통합판</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Google Fonts: Do Hyeon, Nanum Pen Script -->
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap');
-
-        :root {
-            --primary-bg: #1a1a2e;
-            --alchemy-purple: #7b2cbf;
-            --gem-gold: #ffcf33;
-        }
-
         body {
-            font-family: 'Gaegu', cursive;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Do Hyeon', sans-serif;
+            background-color: #fdfbf7; /* 따뜻한 느낌의 미색 배경 */
         }
-
-        /* 가마솥 애니메이션 */
-        .cauldron-container {
-            position: relative;
-            width: 150px;
-            height: 150px;
+        .step-card {
+            display: none;
         }
-
-        .cauldron {
-            filter: drop-shadow(0 0 15px rgba(123, 44, 191, 0.6));
+        .step-card.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
         }
-
-        .brewing {
-            animation: shake 0.5s infinite ease-in-out;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translate(3px, 1px) rotate(-1deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translate(1px, 2px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-
-        /* 보석 탄생 애니메이션 */
-        .gem-appear {
-            animation: float-up 2s ease-out forwards;
-        }
-
-        @keyframes float-up {
-            0% { transform: translateY(20px) scale(0); opacity: 0; }
-            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
-            100% { transform: translateY(-20px) scale(1); opacity: 1; }
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: white;
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3b82f6;
             border-radius: 50%;
-            pointer-events: none;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
         }
-
-        .input-area {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        .stone-btn:active {
-            transform: scale(0.95);
+        /* 대본 출력 영역 스타일: 따뜻하고 가독성 좋은 나눔펜글씨 적용 */
+        #scriptOutput {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-family: 'Nanum Pen Script', cursive;
+            min-height: 400px;
+            outline: none;
+            padding: 3rem;
+            font-size: 1.6rem;
+            color: #2d3748;
+            background-color: #ffffff;
+            border-radius: 2rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        .history-card {
-            cursor: pointer;
+        #scriptOutput:focus {
+            box-shadow: inset 0 0 0 3px #fde68a;
+        }
+        .story-btn {
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            color: #4a5568;
             transition: all 0.2s;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 54px;
         }
-
-        .history-card:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.4);
+        .story-btn:hover {
+            background-color: #fffaf0;
+            border-color: #ed8936;
+            color: #ed8936;
         }
-
-        /* 모달 및 보조 UI */
-        #qrModal, #actionModal {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
+        .story-btn.active {
+            background-color: #ed8936;
+            color: white;
+            border-color: #dd6b20;
         }
-
-        #qrcode img {
-            margin: 0 auto;
-            border: 8px solid white;
-            border-radius: 8px;
+        .grade-tab {
+            cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 15px 15px 0 0;
+            transition: all 0.2s;
+            font-weight: bold;
+            color: #a0aec0;
+            background-color: #edf2f7;
         }
-        
-        .action-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid #7b2cbf;
+        .grade-tab.active {
+            background-color: #fff;
+            color: #ed8936;
+            box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.05);
+        }
+        .role-tag {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.95rem;
+            margin: 4px;
+            display: inline-block;
+            border: 1px solid #fde68a;
         }
     </style>
 </head>
-<body class="p-4 md:p-8 flex flex-col items-center">
-
-    <!-- 공유 버튼 (우측 상단) -->
-    <div class="fixed top-4 right-4 z-50">
-        <button onclick="toggleQRModal()" class="bg-white/10 hover:bg-white/20 p-3 rounded-full border border-white/20 shadow-lg transition-all flex items-center gap-2">
-            <span class="text-xl">📲</span>
-            <span class="font-bold hidden sm:inline">상점 주소</span>
-        </button>
-    </div>
+<body class="min-h-screen flex flex-col items-center p-4 pb-20">
 
     <!-- 헤더 영역 -->
-    <header class="text-center mb-8">
-        <h1 class="text-5xl font-bold text-yellow-400 mb-2 drop-shadow-lg">✨ 약점 연금술 상점 ✨</h1>
-        <p class="text-xl text-gray-300">투박한 약점 돌멩이를 빛나는 강점 보석으로 바꿔드려요!</p>
+    <header class="w-full max-w-5xl text-center py-10">
+        <h1 class="text-5xl md:text-6xl text-orange-500 mb-3">🎭 역할극 대본 생성기</h1>
+        <p class="text-gray-500 text-xl font-light">교과서 속 따뜻한 이야기들을 연극 대본으로 만들어요!</p>
     </header>
 
-    <main class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <main class="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl p-6 md:p-10 border border-orange-50">
         
-        <!-- 왼쪽: 약점 투입구 -->
-        <section class="input-area rounded-3xl p-6 flex flex-col gap-4 shadow-2xl">
-            <div class="flex items-center gap-3 mb-2">
-                <span class="text-3xl">🪨</span>
-                <h2 class="text-2xl font-bold text-white">약점 돌멩이 넣기</h2>
+        <!-- 단계 표시 인디케이터 -->
+        <div class="flex justify-around mb-10 border-b pb-6">
+            <div id="stepIndicator1" class="text-orange-500 font-bold border-b-4 border-orange-500 pb-2 flex items-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm">1</span> 이야기 선택
             </div>
-            <textarea id="weaknessInput" 
-                      class="w-full h-32 p-4 rounded-xl bg-gray-900 text-white border-2 border-gray-700 focus:border-purple-500 focus:outline-none text-xl resize-none"
-                      placeholder="예: 나는 행동이 너무 느려요..."></textarea>
+            <div id="stepIndicator2" class="text-gray-400 flex items-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">2</span> 역할 정하기
+            </div>
+            <div id="stepIndicator3" class="text-gray-400 flex items-center gap-2">
+                <span class="w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">3</span> 대본 완성
+            </div>
+        </div>
+
+        <!-- 1단계: 이야기 선택 -->
+        <div id="step1" class="step-card active">
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <label class="text-2xl text-orange-800 font-bold">📚 전학년 국어 교과서 도서관</label>
+                    <div class="relative w-full md:w-80">
+                        <input type="text" id="storySearch" placeholder="작품 제목을 검색해 보세요..." oninput="filterStories()"
+                            class="w-full pl-12 pr-4 py-3 border-2 border-orange-50 rounded-2xl text-md focus:border-orange-300 outline-none shadow-sm font-sans">
+                        <span class="absolute left-4 top-3 text-xl">🔍</span>
+                    </div>
+                </div>
+                
+                <!-- 학년별 탭 -->
+                <div class="flex overflow-x-auto bg-orange-50/30 rounded-t-2xl p-1 gap-1">
+                    <div onclick="changeGrade(3)" id="gradeTab3" class="grade-tab active flex-1 text-center">3학년</div>
+                    <div onclick="changeGrade(4)" id="gradeTab4" class="grade-tab flex-1 text-center">4학년</div>
+                    <div onclick="changeGrade(5)" id="gradeTab5" class="grade-tab flex-1 text-center">5학년</div>
+                    <div onclick="changeGrade(6)" id="gradeTab6" class="grade-tab flex-1 text-center">6학년</div>
+                </div>
+
+                <!-- 이야기 버튼 그리드 -->
+                <div id="textbookStoryList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 p-6 bg-white border-x border-b border-orange-100 rounded-b-2xl max-h-80 overflow-y-auto shadow-inner">
+                    <!-- JS로 생성됨 -->
+                </div>
+            </div>
+
+            <label class="block text-xl mb-4 text-gray-700 font-bold">이야기 줄거리 (수정하여 우리만의 내용을 추가해도 좋아요)</label>
+            <textarea id="storyInput" rows="6" placeholder="위에서 이야기를 선택하거나 직접 내용을 입력해 주세요." 
+                class="w-full border-2 border-orange-50 bg-orange-50/10 rounded-2xl p-6 focus:ring-4 focus:ring-orange-100 focus:border-orange-300 outline-none transition-all resize-none text-lg leading-relaxed font-sans"></textarea>
             
-            <button onclick="startAlchemy()" 
-                    id="alchemyBtn"
-                    class="stone-btn w-full py-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-2xl font-bold transition-all shadow-lg flex items-center justify-center gap-2">
-                <span>🔥 연금술 시작하기</span>
-            </button>
-        </section>
-
-        <!-- 오른쪽: 보석 전시관 -->
-        <section id="resultArea" class="input-area rounded-3xl p-6 flex flex-col items-center justify-center min-h-[400px] shadow-2xl relative overflow-hidden">
-            <div id="placeholderMsg" class="text-center text-gray-400">
-                <div class="text-6xl mb-4">🔮</div>
-                <p class="text-xl text-white">연금술이 시작되면<br>이곳에서 보석이 탄생해요!</p>
+            <div id="roleIdentifyLoading" class="hidden mt-6 flex items-center justify-center gap-4 text-orange-600 font-bold">
+                <div class="loader"></div>
+                <span>이야기 속 배역들을 분석하고 있어요...</span>
             </div>
 
-            <!-- 결과물 표시 (숨김 상태) -->
-            <div id="gemResult" class="hidden flex flex-col items-center text-center w-full">
-                <div id="gemIcon" class="text-8xl mb-4 gem-appear cursor-pointer" onclick="showActionGuide()">💎</div>
-                <h3 class="text-3xl font-bold text-yellow-300 mb-2" id="strengthTitle">제목</h3>
-                <div class="text-sm text-purple-300 mb-4 bg-purple-900/40 px-3 py-1 rounded-full border border-purple-500/30" id="originalWeakness">원래 약점 표시</div>
-                <p class="text-xl leading-relaxed text-white bg-black/30 p-4 rounded-xl shadow-inner mb-6 w-full" id="strengthDesc">
-                    설명 내용
-                </p>
-                <!-- 행동 지침 확인 버튼 -->
-                <button onclick="showActionGuide()" class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2 rounded-full font-bold shadow-lg transition-transform active:scale-95 flex items-center gap-2">
-                    <span>💡</span> 성장 비결 확인하기
+            <div class="mt-10 flex justify-center">
+                <button onclick="handleIdentifyRoles()" class="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-5 rounded-3xl shadow-2xl transition-all transform hover:scale-105 font-bold">
+                    배역 분석 시작하기 ➡️
                 </button>
             </div>
+        </div>
 
-            <!-- 가마솥 애니메이션 -->
-            <div id="alchemyLoading" class="hidden flex flex-col items-center">
-                <div class="cauldron-container brewing">
-                    <svg class="cauldron w-full h-full" viewBox="0 0 200 200">
-                        <path fill="#4B3F72" d="M30 80c0-10 10-20 20-20h100c10 0 20 10 20 20v60c0 20-20 40-40 40H70c-20 0-40-20-40-40V80z"/>
-                        <rect x="20" y="70" width="160" height="15" rx="7" fill="#1F1A38"/>
-                        <circle cx="60" cy="180" r="15" fill="#1F1A38"/>
-                        <circle cx="140" cy="180" r="15" fill="#1F1A38"/>
-                        <path fill="#7B2CBF" d="M40 75s10-15 60-15 60 15 60 15v5H40v-5z">
-                            <animate attributeName="d" dur="1s" repeatCount="indefinite" values="M40 75s10-15 60-15 60 15 60 15v5H40v-5z;M40 75s10-5 60-5 60 5 60 5v5H40v-5z;M40 75s10-15 60-15 60 15 60 15v5H40v-5z" />
-                        </path>
-                    </svg>
+        <!-- 2단계: 학생 이름 및 배역 할당 -->
+        <div id="step2" class="step-card">
+            <div class="mb-10">
+                <h3 class="text-xl text-gray-800 font-bold mb-4 flex items-center gap-2">
+                    📋 추천 배역 리스트
+                </h3>
+                <div id="detectedRolesContainer" class="flex flex-wrap gap-2 p-5 bg-orange-50 rounded-2xl border-2 border-dashed border-orange-200 min-h-[70px]">
                 </div>
-                <p class="mt-4 text-purple-300 font-bold animate-pulse text-2xl">신비로운 힘으로 변환 중...</p>
             </div>
-        </section>
+
+            <div class="bg-amber-50 p-8 rounded-[40px] mb-10 border border-amber-100">
+                <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                    <span class="text-xl font-bold text-amber-800">👥 연극할 학생 수:</span>
+                    <div class="flex items-center gap-3">
+                        <input type="number" id="studentCount" min="1" max="15" value="4" onchange="renderAssignmentInputs()"
+                            class="w-24 border-2 border-amber-200 rounded-2xl px-4 py-3 text-center text-xl outline-none focus:border-amber-500 bg-white font-bold">
+                        <span class="text-amber-600 font-bold">명</span>
+                    </div>
+                </div>
+                
+                <div id="assignmentInputsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-10">
+                <button onclick="goToStep(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xl px-10 py-4 rounded-2xl transition-all">
+                    ⬅️ 뒤로가기
+                </button>
+                <button onclick="generateScript()" class="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-5 rounded-3xl shadow-2xl transition-all transform hover:scale-105 font-bold">
+                    🚀 대본 완성하기!
+                </button>
+            </div>
+        </div>
+
+        <!-- 3단계: 대본 결과 및 편집 -->
+        <div id="step3" class="step-card">
+            <div id="loadingArea" class="hidden flex flex-col items-center justify-center py-24">
+                <div class="loader mb-10 w-20 h-20 border-[10px] border-t-orange-500"></div>
+                <p class="text-3xl text-orange-600 animate-pulse text-center font-bold">우리들만의 따뜻한 이야기를<br>대본으로 작성하고 있어요!</p>
+            </div>
+
+            <div id="resultArea" class="hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <div>
+                        <h3 class="text-3xl text-orange-700 font-bold mb-1">🎭 완성된 역할극 대본</h3>
+                        <p class="text-md text-slate-500 flex items-center gap-2 font-sans font-medium">
+                            <span>✍️</span> 대본 내용을 클릭해서 자유롭게 고치거나 대사를 추가해 보세요!
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="copyToClipboard()" class="bg-orange-100 text-orange-700 px-6 py-2 rounded-2xl hover:bg-orange-200 transition-colors font-bold font-sans">복사하기</button>
+                    </div>
+                </div>
+                
+                <div id="scriptOutput" contenteditable="true" class="shadow-xl transition-all border border-orange-100 overflow-y-auto max-h-[800px]">
+                    <!-- 대본 내용 -->
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-12">
+                    <button onclick="printScript()" class="bg-orange-500 hover:bg-orange-600 text-white py-6 rounded-3xl text-2xl shadow-xl font-bold transition-all transform hover:-translate-y-1">
+                        🖨️ 대본 인쇄 / 저장하기
+                    </button>
+                    <button onclick="goToStep(1)" class="bg-slate-100 hover:bg-slate-200 text-slate-500 px-10 py-6 rounded-3xl text-xl font-medium transition-all">
+                        🔄 처음으로 돌아가기
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- 하단: 발견한 보석 수집함 -->
-    <footer class="w-full max-w-4xl mt-12 bg-black/40 p-6 rounded-3xl border border-white/10">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold flex items-center gap-2 text-white">
-                <span>📦</span> 나의 보석 가방 (최근 10개)
-            </h2>
-            <button onclick="clearAllHistory()" class="text-sm text-gray-500 hover:text-red-400 underline transition-colors">기록 초기화</button>
-        </div>
-        <div id="gemHistory" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <footer class="mt-16 text-slate-400 text-sm pb-10 text-center font-sans">
+        © 2024 역할극 대본 생성기 | 전학년 국어 교과서 문학 통합 라이브러리 탑재
     </footer>
 
-    <!-- 성장 비결(행동 지침) 모달 -->
-    <div id="actionModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4">
-        <div class="bg-gray-900 border-2 border-yellow-500 p-6 md:p-8 rounded-3xl max-w-lg w-full relative shadow-[0_0_50px_rgba(234,179,8,0.3)]">
-            <button onclick="closeActionModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">✕</button>
-            <div class="text-center mb-6">
-                <span id="modalGemIcon" class="text-6xl block mb-2">💎</span>
-                <h2 class="text-2xl font-bold text-yellow-400" id="modalTitle">보석 이름</h2>
-                <p class="text-gray-400 mt-1">이 강점을 더 빛나게 만드는 3가지 방법</p>
-            </div>
-            
-            <div id="actionList" class="flex flex-col gap-3 mb-6 text-left">
-                <!-- 행동 지침 리스트가 여기에 담깁니다 -->
-            </div>
-            
-            <button onclick="closeActionModal()" class="w-full py-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded-xl text-xl transition-all">
-                확인했습니다!
-            </button>
-        </div>
-    </div>
-
-    <!-- QR 코드 모달 -->
-    <div id="qrModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-gray-900 border-2 border-purple-500 p-8 rounded-3xl max-w-sm w-full text-center relative">
-            <button onclick="toggleQRModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">✕</button>
-            <h2 class="text-2xl font-bold text-yellow-400 mb-4">상점 공유 QR 코드</h2>
-            <div id="qrcode" class="mb-6 flex justify-center"></div>
-            <p class="text-gray-300 mb-4">친구들이나 선생님께<br>이 QR 코드를 보여주세요!</p>
-            <button onclick="toggleQRModal()" class="w-full py-3 bg-purple-600 rounded-xl font-bold">닫기</button>
-        </div>
-    </div>
-
     <script>
-        const apiKey = ""; // 시스템에 의해 자동 주입됨
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'weakness-alchemy';
-        const gemIcons = ["💎", "💍", "✨", "🔮", "💠", "🌟", "🌈", "🔥", "🪐", "🦄"];
-        
-        let currentStrengthData = null; // 현재 화면에 표시된 데이터 임시 저장
+        // --- 전학년 국어 교과서 문학 데이터베이스 (방대한 목록) ---
+        const textbookStories = [
+            // 3학년
+            { grade: 3, title: "토끼와 자라", content: "용왕님의 병을 위해 자라가 토끼의 간을 구하러 육지로 가지만, 지혜로운 토끼가 간을 육지에 두고 왔다고 속여 탈출하는 이야기입니다." },
+            { grade: 3, title: "젊어지는 샘물", content: "샘물을 마시고 젊어진 할아버지와 아기가 된 욕심쟁이 영감님의 이야기입니다." },
+            { grade: 3, title: "아기 돼지 삼형제", content: "늑대의 위협에서 벽돌집을 지은 막내 돼지가 형들을 구하고 집을 지켜내는 이야기입니다." },
+            { grade: 3, title: "거인 이야기", content: "정원의 문을 닫았던 거인이 아이들의 웃음소리와 함께 정원에 봄이 오는 것을 보고 마음을 여는 이야기입니다." },
+            { grade: 3, title: "황금 도끼 은 도끼", content: "정직한 나무꾼이 산신령에게 금도끼를 받고, 욕심쟁이는 자기 도끼마저 잃게 되는 이야기입니다." },
+            { grade: 3, title: "꽃샘추위", content: "추운 겨울이 지나고 봄이 오는 것을 시샘하는 겨울바람과, 이를 이겨내고 꽃을 피우려는 봄꽃들의 이야기입니다." },
+            { grade: 3, title: "해와 달이 된 오누이", content: "호랑이를 피해 하늘로 올라간 오누이가 해와 달이 되었다는 우리나라 전래 설화입니다." },
+            { grade: 3, title: "단군 신화", content: "곰과 호랑이가 사람이 되기 위해 동굴에서 견디고, 결국 웅녀가 되어 단군을 낳은 건국 이야기입니다." },
+            { grade: 3, title: "의좋은 형제", content: "밤마다 서로의 논에 볏단을 옮겨주던 형제의 따뜻한 우애를 다룬 이야기입니다." },
+            { grade: 3, title: "떡보의 하루", content: "떡을 너무 좋아하는 떡보가 겪는 재미있고 훈훈한 일상 이야기입니다." },
+
+            // 4학년
+            { grade: 4, title: "만복이네 떡집", content: "심술궂은 만복이가 신비로운 떡을 먹으며 남을 배려하는 법을 배우는 판타지 동화입니다." },
+            { grade: 4, title: "바삭바삭 갈매기", content: "과자 맛에 빠져 야성을 잃었던 갈매기가 다시 자유로운 바다로 돌아가는 과정을 그린 이야기입니다." },
+            { grade: 4, title: "흥부와 놀부", content: "제비 다리를 고쳐준 흥부와 일부러 부러뜨린 놀부의 대조적인 결말을 보여주는 권선징악 이야기입니다." },
+            { grade: 4, title: "콩쥐 팥쥐", content: "계모의 구박을 이겨내고 동물들의 도움으로 행복을 찾는 우리나라판 신데렐라 이야기입니다." },
+            { grade: 4, title: "사라진 보물", content: "교실에서 보물을 찾기 위해 친구들이 탐정이 되어 단서를 추리하는 이야기입니다." },
+            { grade: 4, title: "가방 들어주는 아이", content: "장애를 가진 친구의 가방을 들어주며 진정한 우정을 쌓아가는 감동적인 이야기입니다." },
+            { grade: 4, title: "넉 점 반", content: "심부름을 간 아이가 구경에 빠져 시간을 잊어버리는 천진난만한 일상을 다룬 이야기입니다." },
+            { grade: 4, title: "아낌없이 주는 나무", content: "소년을 위해 자신의 모든 것을 내어주는 나무의 조건 없는 사랑 이야기입니다." },
+            { grade: 4, title: "엄마의 마흔 번째 생일", content: "엄마의 생일을 준비하며 가족의 소중함을 깨닫는 아이들의 이야기입니다." },
+            { grade: 4, title: "금수 회의록 (요약)", content: "동물들이 모여 인간들의 잘못을 비판하는 우화적인 이야기입니다." },
+
+            // 5학년
+            { grade: 5, title: "소가 된 게으름장이", content: "일을 하기 싫어하던 게으름장이가 소 머리탈을 썼다가 진짜 소가 되어 고생한 뒤 깨달음을 얻는 이야기입니다." },
+            { grade: 5, title: "임금님 귀는 당나귀 귀", content: "임금님의 비밀을 대나무 숲에서 외친 복두장이와 진실이 밝혀지는 통쾌한 설화입니다." },
+            { grade: 5, title: "홍길동전", content: "서자로 태어난 홍길동이 도술을 익혀 빈민을 돕는 의적이 되는 영웅 소설입니다." },
+            { grade: 5, title: "심청전", content: "눈먼 아버지를 위해 인당수에 몸을 던진 심청이의 효심과 행복한 결말을 다룬 고전입니다." },
+            { grade: 5, title: "자전거 도둑", content: "도시에서 살아가는 소년이 도덕적 갈등을 겪으며 정직의 가치를 깨닫는 소설입니다." },
+            { grade: 5, title: "춘향전", content: "성춘향과 이몽룡의 신분을 초월한 사랑과 변학도의 횡포를 이겨내는 이야기입니다." },
+            { grade: 5, title: "양반전", content: "무능한 양반의 허례허식을 풍자하고 신분을 사고파는 사회상을 다룬 소설입니다." },
+            { grade: 5, title: "박씨전", content: "외모로 차별받던 박씨 부인이 도술로 적군을 물리치는 여성 영웅의 활약상입니다." },
+            { grade: 5, title: "장화홍련전", content: "억울하게 죽은 자매의 원한을 풀고 계모의 악행이 밝혀지는 고전 소설입니다." },
+            { grade: 5, title: "방구 아저씨", content: "투박하지만 따뜻한 마음을 가진 아저씨와 아이들의 교감을 다룬 동화입니다." },
+
+            // 6학년
+            { grade: 6, title: "하늘은 맑건만", content: "주운 돈을 써버린 문기가 죄책감을 느끼다 정직하게 고백하고 마음의 평화를 얻는 이야기입니다." },
+            { grade: 6, title: "수난이대", content: "전쟁으로 다리를 잃은 아버지와 팔을 잃은 아들이 서로를 부축하며 외나무다리를 건너는 이야기입니다." },
+            { grade: 6, title: "마당을 나온 암탉", content: "양계장을 나와 자유를 찾고 아기 오리를 정성껏 키우는 암탉 잎싹의 감동적인 여정입니다." },
+            { grade: 6, title: "이상한 나라의 앨리스", content: "회중시계를 든 토끼를 따라 구멍에 빠진 앨리스가 겪는 신비로운 모험 이야기입니다." },
+            { grade: 6, title: "어린 왕자", content: "여우와 장미를 통해 길들임과 책임, 진정한 관계의 의미를 배우는 철학적인 동화입니다." },
+            { grade: 6, title: "꽃신", content: "전통을 고수하는 꽃신 제작자의 고집과 애환을 다룬 소설입니다." },
+            { grade: 6, title: "옹고집전", content: "욕심 많은 진짜 옹고집이 가짜 옹고집에게 쫓겨나 고생하며 개과천선하는 풍자 소설입니다." },
+            { grade: 6, title: "연오랑과 세오녀", content: "신라의 부부가 일본으로 건너가 해와 달의 정기를 되찾아준 설화입니다." },
+            { grade: 6, title: "빨간 머리 앤", content: "상상력이 풍부한 고아 소녀 앤이 에이번리 마을에서 성장하며 겪는 유쾌한 이야기입니다." },
+            { grade: 6, title: "허준 (동의보감)", content: "백성을 사랑하는 마음으로 평생을 의학 연구에 바친 허준의 일생을 다룬 이야기입니다." }
+        ];
+
+        const apiKey = ""; 
+        let currentGrade = 3;
+        let userData = {
+            story: "",
+            detectedRoles: [],
+            assignments: []
+        };
 
         window.onload = () => {
-            renderHistory();
-            generateQRCode();
+            renderStoryList(3);
+        };
+
+        function changeGrade(grade) {
+            currentGrade = grade;
+            document.querySelectorAll('.grade-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`gradeTab${grade}`).classList.add('active');
+            renderStoryList(grade);
         }
 
-        function generateQRCode() {
-            const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = "";
-            const currentUrl = window.location.href;
-            new QRCode(qrContainer, {
-                text: currentUrl,
-                width: 200, height: 200,
-                colorDark : "#000000", colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
+        function filterStories() {
+            const term = document.getElementById('storySearch').value.toLowerCase();
+            renderStoryList(currentGrade, term);
+        }
+
+        function renderStoryList(grade, filter = '') {
+            const listContainer = document.getElementById('textbookStoryList');
+            listContainer.innerHTML = '';
+            const filteredStories = filter 
+                ? textbookStories.filter(s => s.title.toLowerCase().includes(filter))
+                : textbookStories.filter(s => s.grade === grade);
+            
+            filteredStories.forEach(story => {
+                const btn = document.createElement('button');
+                btn.className = 'story-btn shadow-sm font-medium';
+                btn.innerText = story.title;
+                btn.onclick = () => {
+                    document.getElementById('storyInput').value = story.content;
+                    document.querySelectorAll('.story-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+                listContainer.appendChild(btn);
             });
         }
 
-        function toggleQRModal() {
-            const modal = document.getElementById('qrModal');
-            modal.classList.toggle('hidden');
+        function goToStep(stepNum) {
+            document.querySelectorAll('.step-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`step${stepNum}`).classList.add('active');
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById(`stepIndicator${i}`);
+                if (i === stepNum) {
+                    indicator.className = "text-orange-500 font-bold border-b-4 border-orange-500 pb-2 flex items-center gap-2";
+                    indicator.querySelector('span').className = "w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm";
+                } else if (i < stepNum) {
+                    indicator.className = "text-green-500 font-bold flex items-center gap-2";
+                    indicator.querySelector('span').className = "w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm";
+                } else {
+                    indicator.className = "text-gray-400 flex items-center gap-2";
+                    indicator.querySelector('span').className = "w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm";
+                }
+            }
+            window.scrollTo(0, 0);
         }
 
-        async function startAlchemy() {
-            const input = document.getElementById('weaknessInput');
-            const weakness = input.value.trim();
-
-            if (!weakness) {
-                alert("약점 돌멩이를 먼저 넣어주세요!");
-                return;
+        async function handleIdentifyRoles() {
+            const story = document.getElementById('storyInput').value.trim();
+            if (!story) return alert("이야기를 먼저 선택하거나 입력해 주세요!");
+            document.getElementById('roleIdentifyLoading').classList.remove('hidden');
+            try {
+                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `이야기에서 역할극 배역 4~8명 추출 (JSON ["배역1", "배역2"] 형식): ${story}` }] }],
+                        generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { roles: { type: "ARRAY", items: { type: "STRING" } } } } }
+                    })
+                });
+                const result = await response.json();
+                userData.detectedRoles = JSON.parse(result.candidates[0].content.parts[0].text).roles || ["해설", "주인공"];
+                renderDetectedRoles();
+                renderAssignmentInputs();
+                goToStep(2);
+            } catch (e) {
+                userData.detectedRoles = ["해설", "주인공", "친구1", "친구2"];
+                renderDetectedRoles();
+                renderAssignmentInputs();
+                goToStep(2);
+            } finally {
+                document.getElementById('roleIdentifyLoading').classList.add('hidden');
             }
+        }
 
-            document.getElementById('placeholderMsg').classList.add('hidden');
-            document.getElementById('gemResult').classList.add('hidden');
-            document.getElementById('alchemyLoading').classList.remove('hidden');
-            document.getElementById('alchemyBtn').disabled = true;
+        function renderDetectedRoles() {
+            document.getElementById('detectedRolesContainer').innerHTML = userData.detectedRoles.map(role => `<span class="role-tag">👤 ${role}</span>`).join('');
+        }
+
+        function renderAssignmentInputs() {
+            const container = document.getElementById('assignmentInputsContainer');
+            const count = parseInt(document.getElementById('studentCount').value) || 4;
+            container.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                container.innerHTML += `
+                    <div class="flex flex-col gap-1 bg-white p-4 rounded-3xl shadow-sm border border-orange-100">
+                        <label class="text-[10px] text-orange-400 font-bold ml-2">참가자 ${i+1}</label>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="학생 이름" class="student-name-input flex-1 border border-slate-100 rounded-xl px-3 py-2 text-sm outline-none focus:border-orange-300 font-sans">
+                            <input type="text" list="roleOptions" placeholder="역할" class="student-role-input flex-1 border border-slate-100 rounded-xl px-3 py-2 text-sm outline-none focus:border-orange-300 font-sans"
+                                value="${userData.detectedRoles[i % userData.detectedRoles.length] || ''}">
+                        </div>
+                    </div>
+                `;
+            }
+            let datalist = document.getElementById('roleOptions') || document.createElement('datalist');
+            datalist.id = 'roleOptions';
+            document.body.appendChild(datalist);
+            datalist.innerHTML = userData.detectedRoles.map(r => `<option value="${r}">`).join('');
+        }
+
+        async function generateScript() {
+            const story = document.getElementById('storyInput').value;
+            const namesAndRoles = Array.from(document.querySelectorAll('.student-name-input')).map((n, i) => {
+                return { name: n.value || '학생'+(i+1), role: document.querySelectorAll('.student-role-input')[i].value || '역할' };
+            });
+            
+            goToStep(3);
+            document.getElementById('loadingArea').classList.remove('hidden');
+            document.getElementById('resultArea').classList.add('hidden');
+
+            const mapping = namesAndRoles.map(a => `${a.name}(배역: ${a.role})`).join(', ');
+
+            const systemPrompt = `당신은 초등학교 국어 교사입니다. 가독성이 아주 좋고 따뜻한 느낌의 연극 대본을 작성하세요.
+제공된 학생 명단과 배역을 정확히 사용하세요: ${mapping}
+
+[구성 지시]
+1. 대본 시작 전 [오늘의 출연진] 섹션을 만드세요.
+   형식: 🎭 오늘의 출연진\n- [배역 이름] : [학생 이름] 학생\n... (모든 학생 나열)
+2. 대본 본문의 대사 형식: [배역 이름] ([학생 이름]): "대사"
+3. 모든 학생의 대사 분량을 골고루 나누어 3~5분 분량으로 작성하세요.
+4. 초등학생 수준에 맞춰 따뜻하고 유쾌한 내용을 담으세요.
+5. 대본 형식: [제목], [장소], [해설], [배역]([이름]): 대사, (지문)`;
 
             try {
-                const strengthData = await transformWeakness(weakness);
-                const randomIcon = gemIcons[Math.floor(Math.random() * gemIcons.length)];
-                
-                currentStrengthData = { ...strengthData, icon: randomIcon, weakness: weakness };
-                
-                showResult(strengthData, randomIcon, weakness);
-                saveToHistory(weakness, strengthData, randomIcon);
-                
-                input.value = "";
-            } catch (error) {
-                console.error(error);
-                alert("연금술 가마솥에 문제가 생겼어요. 다시 시도해주세요!");
-                resetUI();
+                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `이야기 줄거리: ${story}` }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('scriptOutput').innerText = data.candidates[0].content.parts[0].text;
+                document.getElementById('loadingArea').classList.add('hidden');
+                document.getElementById('resultArea').classList.remove('hidden');
+            } catch (e) {
+                document.getElementById('loadingArea').classList.add('hidden');
+                alert("대본 생성에 실패했습니다.");
+                goToStep(2);
             }
         }
 
-        async function transformWeakness(weakness) {
-            const systemPrompt = `
-                너는 초등학교 아이들의 약점을 강점으로 바꿔주는 '마음 연금술사'야. 
-                아이가 입력한 약점 문장을 받으면:
-                1. 긍정적인 퍼스널 브랜딩 문구로 바꾼다.
-                2. 이 약점을 보완하고 강점을 키울 수 있는 아주 구체적이고 쉬운 행동 지침(Action Items) 3가지를 제안한다.
-                
-                형식은 반드시 JSON으로만 답변해: 
-                {
-                  "title": "짧은 강점 별명", 
-                  "description": "격려하는 따뜻한 한 문장",
-                  "actions": ["실천 행동 1", "실천 행동 2", "실천 행동 3"]
+        async function fetchWithRetry(url, options, retries = 5, backoff = 1000) {
+            try {
+                const res = await fetch(url, options);
+                if (!res.ok) throw new Error();
+                return res;
+            } catch (e) {
+                if (retries > 0) {
+                    await new Promise(r => setTimeout(r, backoff));
+                    return fetchWithRetry(url, options, retries - 1, backoff * 2);
                 }
-                
-                예: "행동이 느리다" -> {
-                    "title": "신중한 완벽주의자", 
-                    "description": "무엇이든 꼼꼼하게 살피고 실수 없이 해내는 멋진 능력이 있어요!", 
-                    "actions": ["중요한 일은 미리 계획표 짜보기", "시간을 확인하며 한 단계씩 해결하기", "꼼꼼함이 필요한 역할 맡아보기"]
-                }
-                아이들의 눈높이에서 이해하기 쉽고 재미있게 작성해줘.
-            `;
-
-            const userQuery = `약점: "${weakness}"`;
-            let retries = 5;
-            let delay = 1000;
-
-            while (retries > 0) {
-                try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: userQuery }] }],
-                            systemInstruction: { parts: [{ text: systemPrompt }] },
-                            generationConfig: { responseMimeType: "application/json" }
-                        })
-                    });
-                    const result = await response.json();
-                    return JSON.parse(result.candidates[0].content.parts[0].text);
-                } catch (e) {
-                    retries--;
-                    if (retries === 0) throw e;
-                    await new Promise(res => setTimeout(res, delay));
-                    delay *= 2;
-                }
+                throw e;
             }
         }
 
-        function showResult(data, icon, originalWeakness) {
-            document.getElementById('alchemyLoading').classList.add('hidden');
-            document.getElementById('placeholderMsg').classList.add('hidden');
-            
-            const gemResult = document.getElementById('gemResult');
-            const gemIcon = document.getElementById('gemIcon');
-            
-            gemResult.classList.remove('hidden');
-            gemIcon.innerText = icon;
-            document.getElementById('strengthTitle').innerText = data.title;
-            document.getElementById('originalWeakness').innerText = `원래 돌멩이: ${originalWeakness}`;
-            document.getElementById('strengthDesc').innerText = data.description;
-
-            createSparkles();
-            document.getElementById('alchemyBtn').disabled = false;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        function copyToClipboard() {
+            const text = document.getElementById('scriptOutput').innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("대본이 복사되었습니다!");
         }
 
-        // 행동 지침 모달 열기
-        function showActionGuide() {
-            if (!currentStrengthData) return;
-            
-            document.getElementById('modalGemIcon').innerText = currentStrengthData.icon;
-            document.getElementById('modalTitle').innerText = currentStrengthData.title;
-            
-            const listContainer = document.getElementById('actionList');
-            const actions = currentStrengthData.actions || ["더 나은 내가 되기 위해 노력하기", "나의 장점을 믿기", "매일 조금씩 성장하기"];
-            
-            listContainer.innerHTML = actions.map((act, i) => `
-                <div class="action-item p-4 rounded-xl flex gap-3 items-center animate-fade-in" style="animation-delay: ${i * 0.1}s">
-                    <div class="bg-yellow-500 text-black font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">${i+1}</div>
-                    <p class="text-white text-lg">${act}</p>
-                </div>
-            `).join('');
-            
-            document.getElementById('actionModal').classList.remove('hidden');
-        }
-
-        function closeActionModal() {
-            document.getElementById('actionModal').classList.add('hidden');
-        }
-
-        function saveToHistory(weakness, strengthData, icon) {
-            let history = JSON.parse(localStorage.getItem('alchemyHistory') || '[]');
-            const newGem = {
-                id: Date.now().toString(),
-                weakness,
-                title: strengthData.title,
-                desc: strengthData.description,
-                actions: strengthData.actions,
-                icon: icon
-            };
-            history.unshift(newGem);
-            history = history.slice(0, 10);
-            localStorage.setItem('alchemyHistory', JSON.stringify(history));
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('gemHistory');
-            const history = JSON.parse(localStorage.getItem('alchemyHistory') || '[]');
-            
-            if (history.length === 0) {
-                container.innerHTML = `<p class="text-gray-500 col-span-full text-center py-8 border-2 border-dashed border-gray-800 rounded-2xl">아직 보석이 없어요.</p>`;
-                return;
-            }
-
-            container.innerHTML = history.map(item => `
-                <div class="history-card bg-white/5 border border-white/20 p-4 rounded-2xl flex items-center gap-3" 
-                     onclick="loadGemFromHistory('${item.id}')">
-                    <span class="text-3xl">${item.icon}</span>
-                    <div class="flex-1 overflow-hidden">
-                        <div class="font-bold text-yellow-400 truncate">${item.title}</div>
-                        <div class="text-xs text-gray-500 truncate">돌: ${item.weakness}</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadGemFromHistory(id) {
-            const history = JSON.parse(localStorage.getItem('alchemyHistory') || '[]');
-            const selectedGem = history.find(gem => gem.id === id);
-            
-            if (selectedGem) {
-                currentStrengthData = {
-                    title: selectedGem.title,
-                    description: selectedGem.desc,
-                    actions: selectedGem.actions,
-                    icon: selectedGem.icon,
-                    weakness: selectedGem.weakness
-                };
-                showResult(currentStrengthData, selectedGem.icon, selectedGem.weakness);
-            }
-        }
-
-        function clearAllHistory() {
-            if(confirm("보석 가방을 비우시겠습니까?")) {
-                localStorage.removeItem('alchemyHistory');
-                renderHistory();
-                resetUI();
-            }
-        }
-
-        function resetUI() {
-            document.getElementById('alchemyLoading').classList.add('hidden');
-            document.getElementById('gemResult').classList.add('hidden');
-            document.getElementById('placeholderMsg').classList.remove('hidden');
-            document.getElementById('alchemyBtn').disabled = false;
-            currentStrengthData = null;
-        }
-
-        function createSparkles() {
-            const container = document.getElementById('resultArea');
-            for(let i=0; i<20; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                sparkle.style.left = Math.random() * 100 + '%';
-                sparkle.style.top = Math.random() * 100 + '%';
-                sparkle.style.animation = `float-up ${1 + Math.random()}s ease-out`;
-                container.appendChild(sparkle);
-                setTimeout(() => sparkle.remove(), 1500);
-            }
+        function printScript() {
+            const content = document.getElementById('scriptOutput').innerText;
+            const win = window.open('', '', 'height=800,width=1000');
+            win.document.write(`
+                <html>
+                    <head>
+                        <title>우리들의 따뜻한 대본 출력</title>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
+                            body { 
+                                padding: 60px; 
+                                line-height: 1.8; 
+                                white-space: pre-wrap; 
+                                font-family: 'Nanum Pen Script', cursive; 
+                                font-size: 22pt;
+                                color: #333;
+                            }
+                            h1 { text-align: center; border-bottom: 2px solid #ed8936; padding-bottom: 20px; color: #ed8936; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>🎬 우리들이 만드는 역할극 대본</h1>
+                        ${content}
+                    </body>
+                </html>
+            `);
+            win.document.close();
+            win.print();
         }
     </script>
 </body>
