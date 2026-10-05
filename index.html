@@ -1,515 +1,1276 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>역할극 대본 생성기 - 전학년 교과서 통합판</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Do Hyeon, Nanum Pen Script -->
-    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Do Hyeon', sans-serif;
-            background-color: #fdfbf7; /* 따뜻한 느낌의 미색 배경 */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마음 톡톡! 갈등 해결 역할극 시나리오 작성기</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 구글 폰트: 주아체 및 눈누 감성 폰트 (초등학생 친화형) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <!-- 폰트어썸 아이콘 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fdfbf7',
+              100: '#f8f4ec',
+              200: '#f0e6d2',
+              400: '#e5b971',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            mint: {
+              100: '#e6fcf5',
+              500: '#20c997',
+              600: '#12b886',
+            },
+            coral: {
+              100: '#ffe3e3',
+              400: '#ff8787',
+              500: '#fa5252',
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans KR"', 'sans-serif'],
+            kids: ['"Gaegu"', 'cursive', 'sans-serif'],
+          }
         }
-        .step-card {
-            display: none;
-        }
-        .step-card.active {
-            display: block;
-            animation: fadeIn 0.4s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3b82f6;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* 대본 출력 영역 스타일: 따뜻하고 가독성 좋은 나눔펜글씨 적용 */
-        #scriptOutput {
-            white-space: pre-wrap;
-            line-height: 1.6;
-            font-family: 'Nanum Pen Script', cursive;
-            min-height: 400px;
-            outline: none;
-            padding: 3rem;
-            font-size: 1.6rem;
-            color: #2d3748;
-            background-color: #ffffff;
-            border-radius: 2rem;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
-        #scriptOutput:focus {
-            box-shadow: inset 0 0 0 3px #fde68a;
-        }
-        .story-btn {
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            background-color: #fff;
-            border: 1px solid #e2e8f0;
-            color: #4a5568;
-            transition: all 0.2s;
-            cursor: pointer;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 54px;
-        }
-        .story-btn:hover {
-            background-color: #fffaf0;
-            border-color: #ed8936;
-            color: #ed8936;
-        }
-        .story-btn.active {
-            background-color: #ed8936;
-            color: white;
-            border-color: #dd6b20;
-        }
-        .grade-tab {
-            cursor: pointer;
-            padding: 12px 24px;
-            border-radius: 15px 15px 0 0;
-            transition: all 0.2s;
-            font-weight: bold;
-            color: #a0aec0;
-            background-color: #edf2f7;
-        }
-        .grade-tab.active {
-            background-color: #fff;
-            color: #ed8936;
-            box-shadow: 0 -4px 6px -1px rgb(0 0 0 / 0.05);
-        }
-        .role-tag {
-            background-color: #fef3c7;
-            color: #92400e;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            font-size: 0.95rem;
-            margin: 4px;
-            display: inline-block;
-            border: 1px solid #fde68a;
-        }
-    </style>
+      }
+    }
+  </script>
+
+  <style>
+    /* 귀여운 부드러운 스크롤 및 포커스 스타일 */
+    html {
+      scroll-behavior: smooth;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* 통통 튀는 애니메이션 */
+    @keyframes gentle-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .hover-bounce:hover {
+      animation: gentle-bounce 0.6s ease infinite;
+    }
+
+    /* 인쇄(대본 프린트) 전용 스타일 */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-area {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 pb-20">
+<body class="bg-amber-50/40 text-slate-800 min-h-screen font-sans flex flex-col antialiased selection:bg-amber-200">
 
-    <!-- 헤더 영역 -->
-    <header class="w-full max-w-5xl text-center py-10">
-        <h1 class="text-5xl md:text-6xl text-orange-500 mb-3">🎭 역할극 대본 생성기</h1>
-        <p class="text-gray-500 text-xl font-light">교과서 속 따뜻한 이야기들을 연극 대본으로 만들어요!</p>
-    </header>
+  <!-- 상단 네비게이션 바 -->
+  <header class="bg-white/90 backdrop-blur-md sticky top-0 z-30 border-b border-amber-100 shadow-sm no-print">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('create')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-500 flex items-center justify-center text-white shadow-md shadow-amber-200">
+          <i class="fa-solid fa-masks-theater text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-lg sm:text-xl text-slate-800 tracking-tight flex items-center gap-2">
+            마음 톡톡! 역할극 연구소
+            <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold border border-amber-200 hidden sm:inline-block">초등 3~6학년 교실용</span>
+          </h1>
+          <p class="text-xs text-slate-500 font-medium hidden sm:block">서로의 마음을 이해하고 함께 해결하는 평화 대본 작성기</p>
+        </div>
+      </div>
 
-    <main class="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl p-6 md:p-10 border border-orange-50">
+      <!-- 탭 메뉴 버튼들 -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <button id="tab-btn-create" onclick="switchTab('create')" class="px-3 py-1.5 rounded-xl font-bold text-sm transition-all duration-200 bg-amber-500 text-white shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-feather-pointed"></i>
+          <span>대본 만들기</span>
+        </button>
+        <button id="tab-btn-saved" onclick="switchTab('saved')" class="px-3 py-1.5 rounded-xl font-bold text-sm transition-all duration-200 text-slate-600 hover:bg-amber-100/70 flex items-center gap-1.5">
+          <i class="fa-solid fa-folder-open"></i>
+          <span>내 보관함</span>
+          <span id="saved-badge-count" class="bg-slate-200 text-slate-700 text-xs px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+        <button id="tab-btn-guide" onclick="switchTab('guide')" class="px-3 py-1.5 rounded-xl font-bold text-sm transition-all duration-200 text-slate-600 hover:bg-amber-100/70 flex items-center gap-1.5">
+          <i class="fa-solid fa-lightbulb text-amber-500"></i>
+          <span class="hidden sm:inline">역할극 팁</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨테이너 -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 sm:py-8">
+
+    <!-- 탭 1: 대본 만들기 화면 -->
+    <section id="tab-create" class="space-y-6">
+      
+      <!-- 안내 배너 카드 -->
+      <div class="bg-gradient-to-r from-amber-100 via-orange-50 to-emerald-50 rounded-3xl p-5 sm:p-6 border-2 border-amber-200/80 shadow-sm relative overflow-hidden no-print">
+        <div class="relative z-10 max-w-3xl">
+          <div class="inline-flex items-center gap-2 bg-white/80 px-3 py-1 rounded-full text-xs font-bold text-amber-800 mb-2.5 shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            평화로운 교실을 만드는 3단계 비결
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 leading-snug">
+            친구와 다퉜거나 속상했던 일을 솔직하게 적어보세요!
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base mt-1.5 font-medium">
+            인공지능 도우미가 친구의 속마음과 나의 마음을 엮어 <strong class="text-amber-700 font-bold">실제 연기할 수 있는 감동적인 대본</strong>으로 바꿔줍니다.
+          </p>
+        </div>
+        <div class="absolute -right-4 -bottom-6 opacity-20 sm:opacity-40 text-amber-500 text-8xl pointer-events-none">
+          <i class="fa-solid fa-people-arrows"></i>
+        </div>
+      </div>
+
+      <!-- 입력 양식 및 추천 프리셋 -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- 좌측: 갈등 상황 입력 패널 (7컬럼) -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-7 shadow-sm border border-slate-100 space-y-5 no-print">
+          
+          <!-- 추천 프리셋(자주 일어나는 상황) 칩 -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-sparkles text-amber-500"></i>
+                자주 일어나는 교실 갈등 (눌러서 바로 채우기)
+              </label>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="applyPreset('soccer')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/60 font-medium px-3 py-1.5 rounded-full transition-all">
+                ⚽ 운동장 축구공 독점 싸움
+              </button>
+              <button type="button" onclick="applyPreset('group')" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200/60 font-medium px-3 py-1.5 rounded-full transition-all">
+                📝 모둠 활동 무임승차 갈등
+              </button>
+              <button type="button" onclick="applyPreset('clean')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200/60 font-medium px-3 py-1.5 rounded-full transition-all">
+                🧹 청소 당번 도망치기
+              </button>
+              <button type="button" onclick="applyPreset('chat')" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200/60 font-medium px-3 py-1.5 rounded-full transition-all">
+                💬 단톡방 오해와 은근한 따돌림
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. 장소 및 상황 배경 -->
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1.5">
+              1. 갈등이 일어난 장소는 어디인가요? <span class="text-rose-500">*</span>
+            </label>
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2" id="place-selector">
+              <button type="button" onclick="selectPlace('교실 뒷편')" class="place-btn py-2 px-2 text-center text-xs font-bold rounded-xl border border-slate-200 hover:border-amber-400 focus:outline-none transition-all bg-amber-50 border-amber-400 text-amber-900">
+                🏫 교실
+              </button>
+              <button type="button" onclick="selectPlace('운동장 스탠드')" class="place-btn py-2 px-2 text-center text-xs font-bold rounded-xl border border-slate-200 hover:border-amber-400 focus:outline-none transition-all">
+                ⚽ 운동장
+              </button>
+              <button type="button" onclick="selectPlace('급식실 배식대')" class="place-btn py-2 px-2 text-center text-xs font-bold rounded-xl border border-slate-200 hover:border-amber-400 focus:outline-none transition-all">
+                🍱 급식실
+              </button>
+              <button type="button" onclick="selectPlace('복도 사물함 앞')" class="place-btn py-2 px-2 text-center text-xs font-bold rounded-xl border border-slate-200 hover:border-amber-400 focus:outline-none transition-all">
+                🏃 복도
+              </button>
+              <button type="button" onclick="selectPlace('방과 후 단톡방')" class="place-btn py-2 px-2 text-center text-xs font-bold rounded-xl border border-slate-200 hover:border-amber-400 focus:outline-none transition-all">
+                📱 단톡방
+              </button>
+            </div>
+            <input type="hidden" id="input-place" value="교실 뒷편">
+          </div>
+
+          <!-- 2. 등장인물 이름 및 성격 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- 친구 A -->
+            <div class="p-3.5 bg-rose-50/60 rounded-2xl border border-rose-100 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-rose-700 flex items-center gap-1">
+                  <i class="fa-solid fa-user"></i> 인물 1 (첫 번째 친구)
+                </span>
+                <span class="text-[11px] text-rose-400">속상한 마음을 가진 친구</span>
+              </div>
+              <input type="text" id="char-a-name" value="민우" placeholder="이름 (예: 민우)" maxlength="6"
+                     class="w-full px-3 py-2 text-sm rounded-xl border border-rose-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100 outline-none font-medium bg-white">
+              <input type="text" id="char-a-trait" value="책임감이 강하고 규칙을 중시함" placeholder="성격이나 특징 (예: 승부욕이 강함)"
+                     class="w-full px-3 py-1.5 text-xs rounded-lg border border-rose-200 focus:border-rose-400 outline-none bg-white/90">
+            </div>
+
+            <!-- 친구 B -->
+            <div class="p-3.5 bg-blue-50/60 rounded-2xl border border-blue-100 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-blue-700 flex items-center gap-1">
+                  <i class="fa-solid fa-user"></i> 인물 2 (두 번째 친구)
+                </span>
+                <span class="text-[11px] text-blue-400">함께 갈등을 겪는 친구</span>
+              </div>
+              <input type="text" id="char-b-name" value="서준" placeholder="이름 (예: 서준)" maxlength="6"
+                     class="w-full px-3 py-2 text-sm rounded-xl border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 outline-none font-medium bg-white">
+              <input type="text" id="char-b-trait" value="자유로운 성격에 장난을 좋아함" placeholder="성격이나 특징 (예: 소심하지만 할 말은 함)"
+                     class="w-full px-3 py-1.5 text-xs rounded-lg border border-blue-200 focus:border-blue-400 outline-none bg-white/90">
+            </div>
+          </div>
+
+          <!-- 3. 무슨 일이 일어났나요? (갈등의 발단) -->
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1 flex items-center justify-between">
+              <span>3. 어떤 갈등이 일어났나요? (사실 위주로 적기) <span class="text-rose-500">*</span></span>
+              <span class="text-xs font-normal text-slate-400" id="desc-char-count">0 / 200자</span>
+            </label>
+            <textarea id="conflict-desc" rows="3" maxlength="200"
+                      placeholder="예) 점심시간에 쉬는 시간 종이 쳤는데도 서준이가 공을 계속 안 넘겨주고 혼자 차서, 민우가 화가 나서 소리를 질렀어요."
+                      oninput="updateCharCount()"
+                      class="w-full px-3.5 py-2.5 text-sm rounded-2xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100 outline-none custom-scrollbar transition-all"></textarea>
+          </div>
+
+          <!-- 4. 서로의 속마음 (교육적 관점: I-Message) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">
+                인물 1이 진짜 바란 점 (속마음)
+              </label>
+              <input type="text" id="char-a-wish" value="약속된 시간을 지켜서 다 같이 공을 차고 싶었어" placeholder="예: 무시당한 것 같아 사과받고 싶었어"
+                     class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:border-amber-400 outline-none">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600 block mb-1">
+                인물 2가 진짜 바란 점 (속마음)
+              </label>
+              <input type="text" id="char-b-wish" value="마지막 슛 한 번만 더 해보고 바로 주려고 했던 거야" placeholder="예: 나만 나쁜 사람으로 몰려 억울했어"
+                     class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:border-amber-400 outline-none">
+            </div>
+          </div>
+
+          <!-- 5. 시나리오 결말 스타일 선택 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">
+              대본의 해결 방식 (선택)
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <label class="cursor-pointer border border-amber-200 bg-amber-50/50 hover:bg-amber-100/50 p-2.5 rounded-xl flex items-center gap-2.5 transition-all text-xs font-bold text-slate-700">
+                <input type="radio" name="ending_style" value="솔직한 나-전달법(I-Message)으로 화해" checked class="text-amber-500 focus:ring-amber-400">
+                <span>🤝 나-전달법으로 화해</span>
+              </label>
+              <label class="cursor-pointer border border-slate-200 hover:bg-slate-50 p-2.5 rounded-xl flex items-center gap-2.5 transition-all text-xs font-bold text-slate-700">
+                <input type="radio" name="ending_style" value="규칙을 정하고 공평하게 나누기" class="text-amber-500 focus:ring-amber-400">
+                <span>⚖️ 새로운 규칙 합의</span>
+              </label>
+              <label class="cursor-pointer border border-slate-200 hover:bg-slate-50 p-2.5 rounded-xl flex items-center gap-2.5 transition-all text-xs font-bold text-slate-700">
+                <input type="radio" name="ending_style" value="중재자 친구가 와서 서로의 말을 들어주기" class="text-amber-500 focus:ring-amber-400">
+                <span>🕊️ 친구의 따뜻한 중재</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 시나리오 생성 버튼 -->
+          <div class="pt-2">
+            <button type="button" id="btn-generate" onclick="generateScenario()"
+                    class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-base shadow-lg shadow-amber-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-lg animate-spin" style="animation-duration: 4s;"></i>
+              <span>역할극 시나리오 대본 만들기!</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- 우측: 작성된 시나리오 결과 뷰어 (5컬럼) -->
+        <div class="lg:col-span-5 flex flex-col">
+          
+          <!-- 결과 카드 컨테이너 -->
+          <div id="result-container" class="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-100 flex-grow flex flex-col relative min-h-[500px]">
+            
+            <!-- 초기 빈 상태 화면 -->
+            <div id="empty-state" class="my-auto text-center py-12 px-4 space-y-3">
+              <div class="w-20 h-20 mx-auto rounded-3xl bg-amber-100/70 text-amber-500 flex items-center justify-center text-3xl shadow-inner">
+                <i class="fa-solid fa-scroll"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-700 text-lg">아직 만들어진 대본이 없어요</h3>
+              <p class="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                왼쪽에서 장소와 갈등 상황을 입력하고 <br><strong class="text-amber-600 font-semibold">[시나리오 대본 만들기]</strong>를 눌러보세요!
+              </p>
+              <button onclick="applyPreset('soccer'); generateScenario();" class="mt-2 text-xs font-bold text-amber-700 bg-amber-100/70 hover:bg-amber-200 px-4 py-2 rounded-xl transition-all">
+                💡 예시 대본 바로 구경하기
+              </button>
+            </div>
+
+            <!-- 로딩 상태 표시 -->
+            <div id="loading-state" class="hidden my-auto text-center py-16 px-4 space-y-4">
+              <div class="relative w-16 h-16 mx-auto">
+                <div class="w-16 h-16 rounded-full border-4 border-amber-200 border-t-amber-500 animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-amber-500 text-xl">
+                  <i class="fa-solid fa-masks-theater"></i>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-slate-800 text-base">친구들의 마음을 읽고 대본을 쓰는 중...</h4>
+                <p class="text-xs text-slate-400 mt-1">어떻게 하면 서로 상처받지 않고 대화할 수 있을까요?</p>
+              </div>
+            </div>
+
+            <!-- 완성된 시나리오 화면 (초기엔 숨김) -->
+            <div id="script-content-box" class="hidden flex flex-col h-full print-area">
+              
+              <!-- 상단 컨트롤러 (글자크기, 복사, 저장, 인쇄) -->
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 no-print">
+                <div class="flex items-center gap-1 text-slate-500 text-xs">
+                  <span class="font-bold">글자 크기:</span>
+                  <button onclick="changeFontSize(-1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs font-bold">가-</button>
+                  <button onclick="changeFontSize(1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-xs font-bold">가+</button>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button onclick="saveCurrentScript()" id="btn-save-script" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 flex items-center gap-1">
+                    <i class="fa-regular fa-bookmark"></i>
+                    <span>보관</span>
+                  </button>
+                  <button onclick="copyScriptText()" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 flex items-center gap-1">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>복사</span>
+                  </button>
+                  <button onclick="window.print()" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white hover:bg-slate-900 flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-print"></i>
+                    <span>인쇄</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 대본 본문 렌더링 영역 -->
+              <div id="script-display" class="flex-grow overflow-y-auto custom-scrollbar pr-1 space-y-4 text-sm leading-relaxed">
+                <!-- 자바스크립트로 동적 렌더링 됩니다 -->
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- 탭 2: 내 보관함 화면 -->
+    <section id="tab-saved" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+              <i class="fa-solid fa-box-archive text-amber-500"></i>
+              내가 저장한 역할극 대본들
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">
+              컴퓨터나 태블릿에 안전하게 보관되어 있어요. 수업 시간에 언제든 다시 불러올 수 있습니다.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportScriptsToJSON()" class="text-xs font-bold px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-file-export"></i> 백업 파일 저장
+            </button>
+            <button onclick="clearAllSavedScripts()" class="text-xs font-bold px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 flex items-center gap-1.5">
+              <i class="fa-regular fa-trash-can"></i> 전체 비우기
+            </button>
+          </div>
+        </div>
+
+        <!-- 저장된 목록 카드 그리드 -->
+        <div id="saved-scripts-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 비어있을 때 메시지 혹은 카드 목록이 동적으로 들어옵니다 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 탭 3: 역할극 꿀팁 및 교육 가이드 화면 -->
+    <section id="tab-guide" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-6">
         
-        <!-- 단계 표시 인디케이터 -->
-        <div class="flex justify-around mb-10 border-b pb-6">
-            <div id="stepIndicator1" class="text-orange-500 font-bold border-b-4 border-orange-500 pb-2 flex items-center gap-2">
-                <span class="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm">1</span> 이야기 선택
-            </div>
-            <div id="stepIndicator2" class="text-gray-400 flex items-center gap-2">
-                <span class="w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">2</span> 역할 정하기
-            </div>
-            <div id="stepIndicator3" class="text-gray-400 flex items-center gap-2">
-                <span class="w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm">3</span> 대본 완성
-            </div>
+        <div class="border-b border-slate-100 pb-4">
+          <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-masks-theater text-amber-500"></i>
+            초등학생을 위한 4단계 평화 연기 꿀팁!
+          </h2>
+          <p class="text-sm text-slate-500 mt-1">대본을 읽을 때 친구들과 다음 네 가지만 기억해보세요.</p>
         </div>
 
-        <!-- 1단계: 이야기 선택 -->
-        <div id="step1" class="step-card active">
-            <div class="mb-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <label class="text-2xl text-orange-800 font-bold">📚 전학년 국어 교과서 도서관</label>
-                    <div class="relative w-full md:w-80">
-                        <input type="text" id="storySearch" placeholder="작품 제목을 검색해 보세요..." oninput="filterStories()"
-                            class="w-full pl-12 pr-4 py-3 border-2 border-orange-50 rounded-2xl text-md focus:border-orange-300 outline-none shadow-sm font-sans">
-                        <span class="absolute left-4 top-3 text-xl">🔍</span>
-                    </div>
-                </div>
-                
-                <!-- 학년별 탭 -->
-                <div class="flex overflow-x-auto bg-orange-50/30 rounded-t-2xl p-1 gap-1">
-                    <div onclick="changeGrade(3)" id="gradeTab3" class="grade-tab active flex-1 text-center">3학년</div>
-                    <div onclick="changeGrade(4)" id="gradeTab4" class="grade-tab flex-1 text-center">4학년</div>
-                    <div onclick="changeGrade(5)" id="gradeTab5" class="grade-tab flex-1 text-center">5학년</div>
-                    <div onclick="changeGrade(6)" id="gradeTab6" class="grade-tab flex-1 text-center">6학년</div>
-                </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <!-- 팁 1 -->
+          <div class="p-5 rounded-2xl bg-amber-50/70 border border-amber-100 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-amber-400 text-white font-extrabold flex items-center justify-center text-sm shadow-xs">1</div>
+            <h3 class="font-extrabold text-base text-slate-800">사실만 말하기 (비난하지 않기)</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              "너 원래 이기적이잖아!"라고 인격을 공격하지 않고, "네가 아까 종이 쳤는데 공을 안 줬잖아"처럼 <strong>눈에 보인 행동만 정확히</strong> 짚어요.
+            </p>
+          </div>
 
-                <!-- 이야기 버튼 그리드 -->
-                <div id="textbookStoryList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 p-6 bg-white border-x border-b border-orange-100 rounded-b-2xl max-h-80 overflow-y-auto shadow-inner">
-                    <!-- JS로 생성됨 -->
-                </div>
-            </div>
+          <!-- 팁 2 -->
+          <div class="p-5 rounded-2xl bg-rose-50/70 border border-rose-100 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-rose-400 text-white font-extrabold flex items-center justify-center text-sm shadow-xs">2</div>
+            <h3 class="font-extrabold text-base text-slate-800">속마음(감정) 솔직히 말하기</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              화를 내는 대신 <strong>"그때 나는 무시당하는 기분이 들어서 속상했어"</strong>라고 내 감정을 나-전달법(I-Message)으로 털어놓아요.
+            </p>
+          </div>
 
-            <label class="block text-xl mb-4 text-gray-700 font-bold">이야기 줄거리 (수정하여 우리만의 내용을 추가해도 좋아요)</label>
-            <textarea id="storyInput" rows="6" placeholder="위에서 이야기를 선택하거나 직접 내용을 입력해 주세요." 
-                class="w-full border-2 border-orange-50 bg-orange-50/10 rounded-2xl p-6 focus:ring-4 focus:ring-orange-100 focus:border-orange-300 outline-none transition-all resize-none text-lg leading-relaxed font-sans"></textarea>
-            
-            <div id="roleIdentifyLoading" class="hidden mt-6 flex items-center justify-center gap-4 text-orange-600 font-bold">
-                <div class="loader"></div>
-                <span>이야기 속 배역들을 분석하고 있어요...</span>
-            </div>
+          <!-- 팁 3 -->
+          <div class="p-5 rounded-2xl bg-blue-50/70 border border-blue-100 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-blue-400 text-white font-extrabold flex items-center justify-center text-sm shadow-xs">3</div>
+            <h3 class="font-extrabold text-base text-slate-800">상대방의 이유 한 번만 들어주기</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              친구에게도 나름의 이유가 있었을 거예요. <strong>"너는 그때 왜 그랬던 거야?"</strong>라고 물어보고 끝까지 끊지 않고 들어요.
+            </p>
+          </div>
 
-            <div class="mt-10 flex justify-center">
-                <button onclick="handleIdentifyRoles()" class="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-5 rounded-3xl shadow-2xl transition-all transform hover:scale-105 font-bold">
-                    배역 분석 시작하기 ➡️
-                </button>
-            </div>
+          <!-- 팁 4 -->
+          <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-100 space-y-2">
+            <div class="w-8 h-8 rounded-xl bg-emerald-400 text-white font-extrabold flex items-center justify-center text-sm shadow-xs">4</div>
+            <h3 class="font-extrabold text-base text-slate-800">함께 지킬 수 있는 약속 만들기</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              "다음에는 종이 치면 무조건 패스해주기!", "화가 나면 심호흡 3번 하기"처럼 <strong>구체적인 행동 규칙</strong>을 정해요.
+            </p>
+          </div>
         </div>
 
-        <!-- 2단계: 학생 이름 및 배역 할당 -->
-        <div id="step2" class="step-card">
-            <div class="mb-10">
-                <h3 class="text-xl text-gray-800 font-bold mb-4 flex items-center gap-2">
-                    📋 추천 배역 리스트
-                </h3>
-                <div id="detectedRolesContainer" class="flex flex-wrap gap-2 p-5 bg-orange-50 rounded-2xl border-2 border-dashed border-orange-200 min-h-[70px]">
-                </div>
-            </div>
-
-            <div class="bg-amber-50 p-8 rounded-[40px] mb-10 border border-amber-100">
-                <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
-                    <span class="text-xl font-bold text-amber-800">👥 연극할 학생 수:</span>
-                    <div class="flex items-center gap-3">
-                        <input type="number" id="studentCount" min="1" max="15" value="4" onchange="renderAssignmentInputs()"
-                            class="w-24 border-2 border-amber-200 rounded-2xl px-4 py-3 text-center text-xl outline-none focus:border-amber-500 bg-white font-bold">
-                        <span class="text-amber-600 font-bold">명</span>
-                    </div>
-                </div>
-                
-                <div id="assignmentInputsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mt-10">
-                <button onclick="goToStep(1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xl px-10 py-4 rounded-2xl transition-all">
-                    ⬅️ 뒤로가기
-                </button>
-                <button onclick="generateScript()" class="bg-orange-500 hover:bg-orange-600 text-white text-2xl px-16 py-5 rounded-3xl shadow-2xl transition-all transform hover:scale-105 font-bold">
-                    🚀 대본 완성하기!
-                </button>
-            </div>
+        <!-- 선생님을 위한 지도 팁 -->
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 mt-4">
+          <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5 mb-2">
+            <i class="fa-solid fa-chalkboard-user text-indigo-500"></i>
+            선생님을 위한 교실 활용 팁 (수업 지도안 아이디어)
+          </h4>
+          <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+            <li><strong>2인 1조 역할극:</strong> 두 학생이 역할을 맡고 서로 입장을 바꿔서(Role reversal) 한 번 더 연기해보면 공감 능력이 2배로 자라납니다.</li>
+            <li><strong>해설자(중재자) 참여:</strong> 3인 모둠일 경우 한 명은 객관적으로 상황을 설명하는 해설자나 중재자 친구 역할을 맡기세요.</li>
+            <li><strong>인쇄 후 활동지 부착:</strong> [인쇄] 버튼을 누르면 A4 한 장에 쏙 들어가는 깔끔한 대본이 출력되어 도덕 활동지에 바로 붙일 수 있습니다.</li>
+          </ul>
         </div>
 
-        <!-- 3단계: 대본 결과 및 편집 -->
-        <div id="step3" class="step-card">
-            <div id="loadingArea" class="hidden flex flex-col items-center justify-center py-24">
-                <div class="loader mb-10 w-20 h-20 border-[10px] border-t-orange-500"></div>
-                <p class="text-3xl text-orange-600 animate-pulse text-center font-bold">우리들만의 따뜻한 이야기를<br>대본으로 작성하고 있어요!</p>
-            </div>
+      </div>
+    </section>
 
-            <div id="resultArea" class="hidden">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div>
-                        <h3 class="text-3xl text-orange-700 font-bold mb-1">🎭 완성된 역할극 대본</h3>
-                        <p class="text-md text-slate-500 flex items-center gap-2 font-sans font-medium">
-                            <span>✍️</span> 대본 내용을 클릭해서 자유롭게 고치거나 대사를 추가해 보세요!
-                        </p>
-                    </div>
-                    <div class="flex gap-3">
-                        <button onclick="copyToClipboard()" class="bg-orange-100 text-orange-700 px-6 py-2 rounded-2xl hover:bg-orange-200 transition-colors font-bold font-sans">복사하기</button>
-                    </div>
-                </div>
-                
-                <div id="scriptOutput" contenteditable="true" class="shadow-xl transition-all border border-orange-100 overflow-y-auto max-h-[800px]">
-                    <!-- 대본 내용 -->
-                </div>
+  </main>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-12">
-                    <button onclick="printScript()" class="bg-orange-500 hover:bg-orange-600 text-white py-6 rounded-3xl text-2xl shadow-xl font-bold transition-all transform hover:-translate-y-1">
-                        🖨️ 대본 인쇄 / 저장하기
-                    </button>
-                    <button onclick="goToStep(1)" class="bg-slate-100 hover:bg-slate-200 text-slate-500 px-10 py-6 rounded-3xl text-xl font-medium transition-all">
-                        🔄 처음으로 돌아가기
-                    </button>
-                </div>
-            </div>
-        </div>
+  <!-- 하단 푸터 -->
+  <footer class="bg-white border-t border-slate-100 py-6 mt-8 text-center text-xs text-slate-400 no-print">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>💡 마음 톡톡! 갈등 해결 역할극 시나리오 작성기 · 초등학교 수업 전용 웹앱</p>
+      <p class="text-[11px] text-slate-400">데이터는 학생 기기(브라우저)에 안전하게 저장됩니다.</p>
+    </div>
+  </footer>
 
-    </main>
+  <!-- 토스트 알림창 (alert() 대체 컴포넌트) -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform opacity-0 translate-y-4 pointer-events-none">
+    <div class="bg-slate-900/95 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-sm font-bold">
+      <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+      <span id="toast-message">알림 메시지</span>
+    </div>
+  </div>
 
-    <footer class="mt-16 text-slate-400 text-sm pb-10 text-center font-sans">
-        © 2024 역할극 대본 생성기 | 전학년 국어 교과서 문학 통합 라이브러리 탑재
-    </footer>
+  <!-- 대본 삭제/확인 커스텀 모달 (confirm() 대체) -->
+  <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs hidden p-4">
+    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4 border border-slate-100 animate-scale-up">
+      <div id="modal-icon-container" class="w-14 h-14 mx-auto rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div>
+        <h3 id="modal-title" class="font-extrabold text-slate-800 text-lg">정말 삭제하시겠습니까?</h3>
+        <p id="modal-desc" class="text-xs text-slate-500 mt-1">삭제된 대본은 다시 복구할 수 없습니다.</p>
+      </div>
+      <div class="flex items-center gap-2 pt-2">
+        <button onclick="closeModal(false)" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition-all">
+          취소
+        </button>
+        <button id="modal-confirm-btn" class="flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs transition-all shadow-md">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // --- 전학년 국어 교과서 문학 데이터베이스 (방대한 목록) ---
-        const textbookStories = [
-            // 3학년
-            { grade: 3, title: "토끼와 자라", content: "용왕님의 병을 위해 자라가 토끼의 간을 구하러 육지로 가지만, 지혜로운 토끼가 간을 육지에 두고 왔다고 속여 탈출하는 이야기입니다." },
-            { grade: 3, title: "젊어지는 샘물", content: "샘물을 마시고 젊어진 할아버지와 아기가 된 욕심쟁이 영감님의 이야기입니다." },
-            { grade: 3, title: "아기 돼지 삼형제", content: "늑대의 위협에서 벽돌집을 지은 막내 돼지가 형들을 구하고 집을 지켜내는 이야기입니다." },
-            { grade: 3, title: "거인 이야기", content: "정원의 문을 닫았던 거인이 아이들의 웃음소리와 함께 정원에 봄이 오는 것을 보고 마음을 여는 이야기입니다." },
-            { grade: 3, title: "황금 도끼 은 도끼", content: "정직한 나무꾼이 산신령에게 금도끼를 받고, 욕심쟁이는 자기 도끼마저 잃게 되는 이야기입니다." },
-            { grade: 3, title: "꽃샘추위", content: "추운 겨울이 지나고 봄이 오는 것을 시샘하는 겨울바람과, 이를 이겨내고 꽃을 피우려는 봄꽃들의 이야기입니다." },
-            { grade: 3, title: "해와 달이 된 오누이", content: "호랑이를 피해 하늘로 올라간 오누이가 해와 달이 되었다는 우리나라 전래 설화입니다." },
-            { grade: 3, title: "단군 신화", content: "곰과 호랑이가 사람이 되기 위해 동굴에서 견디고, 결국 웅녀가 되어 단군을 낳은 건국 이야기입니다." },
-            { grade: 3, title: "의좋은 형제", content: "밤마다 서로의 논에 볏단을 옮겨주던 형제의 따뜻한 우애를 다룬 이야기입니다." },
-            { grade: 3, title: "떡보의 하루", content: "떡을 너무 좋아하는 떡보가 겪는 재미있고 훈훈한 일상 이야기입니다." },
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <script>
+    /* =================================================================
+       [초등학교 교사용 상세 주석]
+       본 스크립트는 크게 다음의 블록으로 구성되어 있습니다:
+       1. 앱 상태 관리 및 로컬스토리지 (LocalStorage) 입출력 함수
+       2. 프리셋(자주 일어나는 갈등 상황) 데이터 및 폼 자동 주입 로직
+       3. Gemini API 기반 시나리오 생성 및 오프라인 폴백 템플릿 엔진
+       4. 대본 뷰어 렌더링, 폰트 조절, 인쇄/복사/보관 기능
+       5. 토스트 알림 및 커스텀 확인 모달 (alert/confirm 대체)
+       ================================================================= */
 
-            // 4학년
-            { grade: 4, title: "만복이네 떡집", content: "심술궂은 만복이가 신비로운 떡을 먹으며 남을 배려하는 법을 배우는 판타지 동화입니다." },
-            { grade: 4, title: "바삭바삭 갈매기", content: "과자 맛에 빠져 야성을 잃었던 갈매기가 다시 자유로운 바다로 돌아가는 과정을 그린 이야기입니다." },
-            { grade: 4, title: "흥부와 놀부", content: "제비 다리를 고쳐준 흥부와 일부러 부러뜨린 놀부의 대조적인 결말을 보여주는 권선징악 이야기입니다." },
-            { grade: 4, title: "콩쥐 팥쥐", content: "계모의 구박을 이겨내고 동물들의 도움으로 행복을 찾는 우리나라판 신데렐라 이야기입니다." },
-            { grade: 4, title: "사라진 보물", content: "교실에서 보물을 찾기 위해 친구들이 탐정이 되어 단서를 추리하는 이야기입니다." },
-            { grade: 4, title: "가방 들어주는 아이", content: "장애를 가진 친구의 가방을 들어주며 진정한 우정을 쌓아가는 감동적인 이야기입니다." },
-            { grade: 4, title: "넉 점 반", content: "심부름을 간 아이가 구경에 빠져 시간을 잊어버리는 천진난만한 일상을 다룬 이야기입니다." },
-            { grade: 4, title: "아낌없이 주는 나무", content: "소년을 위해 자신의 모든 것을 내어주는 나무의 조건 없는 사랑 이야기입니다." },
-            { grade: 4, title: "엄마의 마흔 번째 생일", content: "엄마의 생일을 준비하며 가족의 소중함을 깨닫는 아이들의 이야기입니다." },
-            { grade: 4, title: "금수 회의록 (요약)", content: "동물들이 모여 인간들의 잘못을 비판하는 우화적인 이야기입니다." },
+    // 애플리케이션 상태 (State)
+    let currentScriptData = null; // 현재 화면에 출력 중인 대본 객체
+    let currentFontSizeIndex = 1; // 0: 작게, 1: 보통, 2: 크게
+    const fontSizes = ['text-xs', 'text-sm', 'text-base'];
 
-            // 5학년
-            { grade: 5, title: "소가 된 게으름장이", content: "일을 하기 싫어하던 게으름장이가 소 머리탈을 썼다가 진짜 소가 되어 고생한 뒤 깨달음을 얻는 이야기입니다." },
-            { grade: 5, title: "임금님 귀는 당나귀 귀", content: "임금님의 비밀을 대나무 숲에서 외친 복두장이와 진실이 밝혀지는 통쾌한 설화입니다." },
-            { grade: 5, title: "홍길동전", content: "서자로 태어난 홍길동이 도술을 익혀 빈민을 돕는 의적이 되는 영웅 소설입니다." },
-            { grade: 5, title: "심청전", content: "눈먼 아버지를 위해 인당수에 몸을 던진 심청이의 효심과 행복한 결말을 다룬 고전입니다." },
-            { grade: 5, title: "자전거 도둑", content: "도시에서 살아가는 소년이 도덕적 갈등을 겪으며 정직의 가치를 깨닫는 소설입니다." },
-            { grade: 5, title: "춘향전", content: "성춘향과 이몽룡의 신분을 초월한 사랑과 변학도의 횡포를 이겨내는 이야기입니다." },
-            { grade: 5, title: "양반전", content: "무능한 양반의 허례허식을 풍자하고 신분을 사고파는 사회상을 다룬 소설입니다." },
-            { grade: 5, title: "박씨전", content: "외모로 차별받던 박씨 부인이 도술로 적군을 물리치는 여성 영웅의 활약상입니다." },
-            { grade: 5, title: "장화홍련전", content: "억울하게 죽은 자매의 원한을 풀고 계모의 악행이 밝혀지는 고전 소설입니다." },
-            { grade: 5, title: "방구 아저씨", content: "투박하지만 따뜻한 마음을 가진 아저씨와 아이들의 교감을 다룬 동화입니다." },
+    // 로컬스토리지 키 정의
+    const STORAGE_KEY = 'MAUM_TALK_ROLEPLAY_SCRIPTS_V1';
 
-            // 6학년
-            { grade: 6, title: "하늘은 맑건만", content: "주운 돈을 써버린 문기가 죄책감을 느끼다 정직하게 고백하고 마음의 평화를 얻는 이야기입니다." },
-            { grade: 6, title: "수난이대", content: "전쟁으로 다리를 잃은 아버지와 팔을 잃은 아들이 서로를 부축하며 외나무다리를 건너는 이야기입니다." },
-            { grade: 6, title: "마당을 나온 암탉", content: "양계장을 나와 자유를 찾고 아기 오리를 정성껏 키우는 암탉 잎싹의 감동적인 여정입니다." },
-            { grade: 6, title: "이상한 나라의 앨리스", content: "회중시계를 든 토끼를 따라 구멍에 빠진 앨리스가 겪는 신비로운 모험 이야기입니다." },
-            { grade: 6, title: "어린 왕자", content: "여우와 장미를 통해 길들임과 책임, 진정한 관계의 의미를 배우는 철학적인 동화입니다." },
-            { grade: 6, title: "꽃신", content: "전통을 고수하는 꽃신 제작자의 고집과 애환을 다룬 소설입니다." },
-            { grade: 6, title: "옹고집전", content: "욕심 많은 진짜 옹고집이 가짜 옹고집에게 쫓겨나 고생하며 개과천선하는 풍자 소설입니다." },
-            { grade: 6, title: "연오랑과 세오녀", content: "신라의 부부가 일본으로 건너가 해와 달의 정기를 되찾아준 설화입니다." },
-            { grade: 6, title: "빨간 머리 앤", content: "상상력이 풍부한 고아 소녀 앤이 에이번리 마을에서 성장하며 겪는 유쾌한 이야기입니다." },
-            { grade: 6, title: "허준 (동의보감)", content: "백성을 사랑하는 마음으로 평생을 의학 연구에 바친 허준의 일생을 다룬 이야기입니다." }
-        ];
+    // 추천 갈등 상황 데이터 프리셋 (초등 교실 맞춤형)
+    const CONFLICT_PRESETS = {
+      soccer: {
+        place: '운동장 스탠드',
+        charA: { name: '민우', trait: '승부욕이 강하고 규칙을 철저히 지킴', wish: '점심시간이 끝나기 전에 공평하게 골고루 공을 차고 싶었어.' },
+        charB: { name: '서준', trait: '장난기가 많고 축구를 너무 좋아함', wish: '방금 멋진 슛을 한번 시도해보고 바로 넘겨주려고 했어.' },
+        desc: '점심시간 10분 남았을 때 서준이가 혼자 드리블만 하고 패스를 전혀 안 해주자, 민우가 서준이 앞을 가로막고 큰 소리로 화를 내며 공을 뺏으려 했습니다.',
+        ending: '솔직한 나-전달법(I-Message)으로 화해'
+      },
+      group: {
+        place: '교실 뒷편',
+        charA: { name: '지우', trait: '성실하고 모둠 과제를 완벽하게 해내고 싶어함', wish: '나 혼자 다 떠맡지 않고 모둠원들이 조금씩 역할을 나눠 맡아주길 바랐어.' },
+        charB: { name: '도윤', trait: '미술 실기에 자신이 없고 무엇을 해야 할지 망설임', wish: '내가 잘못 그려서 모둠 점수가 깎일까 봐 겁이 나서 머뭇거렸어.' },
+        desc: '사회과 모둠 포스터 만들기 시간인데 도윤이가 책상에 엎드려 딴청만 피우자, 혼자 그림을 그리던 지우가 색연필을 던지며 "너는 왜 아무것도 안 해!"라고 쏘아붙였습니다.',
+        ending: '규칙을 정하고 공평하게 나누기'
+      },
+      clean: {
+        place: '복도 사물함 앞',
+        charA: { name: '하은', trait: '책임감이 강하고 약속을 어기는 것을 싫어함', wish: '빨리 청소를 끝내고 같이 기분 좋게 하교하고 싶었어.' },
+        charB: { name: '예준', trait: '급한 방과 후 학원 시간이 다가와 마음이 조급함', wish: '오늘 학원 레벨 테스트가 있어서 늦으면 혼날까 봐 너무 급했어.' },
+        desc: '종례 후 복도 쓸기 청소 당번인데 예준이가 가방을 챙겨서 그냥 도망가려 하자, 하은이가 예준이의 가방끈을 잡고 "너만 쏙 빠지면 어떡해!"라며 다투기 시작했습니다.',
+        ending: '중재자 친구가 와서 서로의 말을 들어주기'
+      },
+      chat: {
+        place: '방과 후 단톡방',
+        charA: { name: '수아', trait: '친구들의 반응에 민감하고 소외감을 잘 느낌', wish: '나를 따돌리거나 놀리는 게 아니라는 따뜻한 말을 듣고 싶었어.' },
+        charB: { name: '채원', trait: '말이 직설적이고 줄임말이나 장난을 자주 침', wish: '정말 아무 악의 없이 짧게 답장한 건데 오해받아 당황스러웠어.' },
+        desc: '학급 모둠 톡방에서 수아가 쓴 긴 질문에 채원이가 "ㅇㅇ" 두 글자만 보내고 다른 대화로 넘어가자, 수아는 자기를 무시한다고 느껴 톡방을 나가버렸습니다.',
+        ending: '솔직한 나-전달법(I-Message)으로 화해'
+      }
+    };
 
-        const apiKey = ""; 
-        let currentGrade = 3;
-        let userData = {
-            story: "",
-            detectedRoles: [],
-            assignments: []
-        };
-
-        window.onload = () => {
-            renderStoryList(3);
-        };
-
-        function changeGrade(grade) {
-            currentGrade = grade;
-            document.querySelectorAll('.grade-tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(`gradeTab${grade}`).classList.add('active');
-            renderStoryList(grade);
+    // 탭 전환 처리 함수
+    function switchTab(tabName) {
+      const tabs = ['create', 'saved', 'guide'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          el.classList.remove('hidden');
+          btn.classList.add('bg-amber-500', 'text-white', 'shadow-sm');
+          btn.classList.remove('text-slate-600', 'hover:bg-amber-100/70');
+        } else {
+          el.classList.add('hidden');
+          btn.classList.remove('bg-amber-500', 'text-white', 'shadow-sm');
+          btn.classList.add('text-slate-600', 'hover:bg-amber-100/70');
         }
+      });
 
-        function filterStories() {
-            const term = document.getElementById('storySearch').value.toLowerCase();
-            renderStoryList(currentGrade, term);
+      if (tabName === 'saved') {
+        renderSavedScriptsList();
+      }
+    }
+
+    // 장소 선택 버튼 처리
+    function selectPlace(placeName) {
+      document.getElementById('input-place').value = placeName;
+      const buttons = document.querySelectorAll('.place-btn');
+      buttons.forEach(btn => {
+        if (btn.innerText.includes(placeName.split(' ')[0])) {
+          btn.classList.add('bg-amber-50', 'border-amber-400', 'text-amber-900');
+          btn.classList.remove('border-slate-200');
+        } else {
+          btn.classList.remove('bg-amber-50', 'border-amber-400', 'text-amber-900');
+          btn.classList.add('border-slate-200');
         }
+      });
+    }
 
-        function renderStoryList(grade, filter = '') {
-            const listContainer = document.getElementById('textbookStoryList');
-            listContainer.innerHTML = '';
-            const filteredStories = filter 
-                ? textbookStories.filter(s => s.title.toLowerCase().includes(filter))
-                : textbookStories.filter(s => s.grade === grade);
-            
-            filteredStories.forEach(story => {
-                const btn = document.createElement('button');
-                btn.className = 'story-btn shadow-sm font-medium';
-                btn.innerText = story.title;
-                btn.onclick = () => {
-                    document.getElementById('storyInput').value = story.content;
-                    document.querySelectorAll('.story-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                };
-                listContainer.appendChild(btn);
-            });
+    // 추천 프리셋 자동 입력 함수
+    function applyPreset(presetKey) {
+      const data = CONFLICT_PRESETS[presetKey];
+      if (!data) return;
+
+      selectPlace(data.place);
+      document.getElementById('char-a-name').value = data.charA.name;
+      document.getElementById('char-a-trait').value = data.charA.trait;
+      document.getElementById('char-a-wish').value = data.charA.wish;
+
+      document.getElementById('char-b-name').value = data.charB.name;
+      document.getElementById('char-b-trait').value = data.charB.trait;
+      document.getElementById('char-b-wish').value = data.charB.wish;
+
+      const descEl = document.getElementById('conflict-desc');
+      descEl.value = data.desc;
+      updateCharCount();
+
+      // 결말 스타일 라디오 버튼 선택
+      const radios = document.getElementsByName('ending_style');
+      for (const radio of radios) {
+        if (radio.value === data.ending) {
+          radio.checked = true;
+          break;
         }
+      }
 
-        function goToStep(stepNum) {
-            document.querySelectorAll('.step-card').forEach(card => card.classList.remove('active'));
-            document.getElementById(`step${stepNum}`).classList.add('active');
-            for (let i = 1; i <= 3; i++) {
-                const indicator = document.getElementById(`stepIndicator${i}`);
-                if (i === stepNum) {
-                    indicator.className = "text-orange-500 font-bold border-b-4 border-orange-500 pb-2 flex items-center gap-2";
-                    indicator.querySelector('span').className = "w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm";
-                } else if (i < stepNum) {
-                    indicator.className = "text-green-500 font-bold flex items-center gap-2";
-                    indicator.querySelector('span').className = "w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-sm";
-                } else {
-                    indicator.className = "text-gray-400 flex items-center gap-2";
-                    indicator.querySelector('span').className = "w-7 h-7 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm";
+      showToast('추천 갈등 상황을 불러왔어요! ✨', 'info');
+    }
+
+    // 글자 수 카운터 업데이트
+    function updateCharCount() {
+      const descEl = document.getElementById('conflict-desc');
+      const countEl = document.getElementById('desc-char-count');
+      countEl.innerText = `${descEl.value.length} / 200자`;
+    }
+
+    // 시나리오 생성 핵심 함수
+    async function generateScenario() {
+      const place = document.getElementById('input-place').value.trim();
+      const charAName = document.getElementById('char-a-name').value.trim() || '친구1';
+      const charATrait = document.getElementById('char-a-trait').value.trim();
+      const charAWish = document.getElementById('char-a-wish').value.trim();
+
+      const charBName = document.getElementById('char-b-name').value.trim() || '친구2';
+      const charBTrait = document.getElementById('char-b-trait').value.trim();
+      const charBWish = document.getElementById('char-b-wish').value.trim();
+
+      const conflictDesc = document.getElementById('conflict-desc').value.trim();
+
+      let endingStyle = '솔직한 나-전달법(I-Message)으로 화해';
+      const radios = document.getElementsByName('ending_style');
+      for (const r of radios) {
+        if (r.checked) endingStyle = r.value;
+      }
+
+      // 유효성 검사 (초등학생용 친절한 피드백)
+      if (!conflictDesc || conflictDesc.length < 5) {
+        showToast('어떤 갈등이 일어났는지 조금 더 자세히 적어주세요! (5자 이상)', 'error');
+        document.getElementById('conflict-desc').focus();
+        return;
+      }
+
+      // UI 로딩 상태 시작
+      setLoadingState(true);
+
+      const promptPayload = {
+        place,
+        charA: { name: charAName, trait: charATrait, wish: charAWish },
+        charB: { name: charBName, trait: charBTrait, wish: charBWish },
+        conflictDesc,
+        endingStyle
+      };
+
+      try {
+        // 1차 시도: Gemini API를 통한 고품질 시나리오 생성 (gemini-3-flash-preview)
+        const generatedScript = await callGeminiForScenario(promptPayload);
+        renderScript(generatedScript);
+        showToast('멋진 역할극 대본이 완성되었어요! 🎭', 'success');
+      } catch (error) {
+        console.warn('API 호출 실패 또는 오프라인 환경: 내장 초등 교육용 템플릿 엔진으로 즉시 생성합니다.', error);
+        // 2차 시도 (오프라인/에러 대비): 교육용 규칙 기반 폴백 생성기
+        const fallbackScript = generateOfflineScenario(promptPayload);
+        renderScript(fallbackScript);
+        showToast('대본이 완성되었습니다! (오프라인 안심 모드) 💡', 'success');
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    // Gemini API 호출 함수 (JSON 스키마 기반 정형화 출력)
+    async function callGeminiForScenario(data) {
+      const apiKey = ""; // 캔버스 런타임에서 자동 주입되거나 환경 제공됨
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const systemPrompt = `당신은 초등학교 도덕 및 국어 교과서 역할극 대본 전문 작가이자 인성교육 전문가입니다.
+초등학교 3~6학년 학생들의 눈높이에 맞추어, 갈등을 겪는 두 학생이 서로의 감정을 이해하고 '나-전달법(I-Message)'을 통해 따뜻하게 해결하는 역할극 시나리오를 작성해주세요.
+
+[규칙]
+1. 언어는 순화된 한국어 구어체를 사용하고, 초등학생들이 실제로 교실에서 쓸 법한 자연스러운 대사여야 합니다.
+2. 대본은 크게 3단계로 구성됩니다:
+   - 1막(갈등의 시작): 서로 억울하거나 오해해서 날카로운 말이 오가는 장면
+   - 2막(속마음 털어놓기): 숨을 고르고, "사실 나는 ~해서 속상했어"라는 나-전달법으로 속마음 나누기
+   - 3막(화해와 새로운 약속): 서로의 입장을 인정하고 앞으로 어떻게 할지 구체적인 규칙이나 대안을 약속하기
+3. 해설자(나레이션)와 행동 지문(괄호 안의 감정/행동 표현)을 풍부하게 넣어 학생들이 실감나게 연기할 수 있도록 도와주세요.
+4. 마지막에는 학생들이 역할극을 마친 후 함께 이야기 나눌 수 있는 '생각해볼 질문' 2개를 포함하세요.`;
+
+      const userQuery = `갈등 장소: ${data.place}
+등장인물 1: ${data.charA.name} (성격: ${data.charA.trait || '보통'}, 속마음: ${data.charA.wish || '이해받고 싶음'})
+등장인물 2: ${data.charB.name} (성격: ${data.charB.trait || '보통'}, 속마음: ${data.charB.wish || '인정받고 싶음'})
+갈등 상황 설명: ${data.conflictDesc}
+희망하는 해결 방식: ${data.endingStyle}
+
+위 정보를 바탕으로 완성도 높은 역할극 대본 JSON을 생성해주세요.`;
+
+      const payload = {
+        contents: [{ role: "user", parts: [{ text: userQuery }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              title: { type: "STRING", description: "대본 제목 (예: 축구공 하나, 마음 둘)" },
+              place: { type: "STRING" },
+              characters: {
+                type: "ARRAY",
+                items: {
+                  type: "OBJECT",
+                  properties: {
+                    name: { type: "STRING" },
+                    roleDesc: { type: "STRING" },
+                    startEmotion: { type: "STRING" },
+                    endEmotion: { type: "STRING" }
+                  },
+                  required: ["name", "roleDesc", "startEmotion", "endEmotion"]
                 }
-            }
-            window.scrollTo(0, 0);
-        }
-
-        async function handleIdentifyRoles() {
-            const story = document.getElementById('storyInput').value.trim();
-            if (!story) return alert("이야기를 먼저 선택하거나 입력해 주세요!");
-            document.getElementById('roleIdentifyLoading').classList.remove('hidden');
-            try {
-                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `이야기에서 역할극 배역 4~8명 추출 (JSON ["배역1", "배역2"] 형식): ${story}` }] }],
-                        generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { roles: { type: "ARRAY", items: { type: "STRING" } } } } }
-                    })
-                });
-                const result = await response.json();
-                userData.detectedRoles = JSON.parse(result.candidates[0].content.parts[0].text).roles || ["해설", "주인공"];
-                renderDetectedRoles();
-                renderAssignmentInputs();
-                goToStep(2);
-            } catch (e) {
-                userData.detectedRoles = ["해설", "주인공", "친구1", "친구2"];
-                renderDetectedRoles();
-                renderAssignmentInputs();
-                goToStep(2);
-            } finally {
-                document.getElementById('roleIdentifyLoading').classList.add('hidden');
-            }
-        }
-
-        function renderDetectedRoles() {
-            document.getElementById('detectedRolesContainer').innerHTML = userData.detectedRoles.map(role => `<span class="role-tag">👤 ${role}</span>`).join('');
-        }
-
-        function renderAssignmentInputs() {
-            const container = document.getElementById('assignmentInputsContainer');
-            const count = parseInt(document.getElementById('studentCount').value) || 4;
-            container.innerHTML = '';
-            for (let i = 0; i < count; i++) {
-                container.innerHTML += `
-                    <div class="flex flex-col gap-1 bg-white p-4 rounded-3xl shadow-sm border border-orange-100">
-                        <label class="text-[10px] text-orange-400 font-bold ml-2">참가자 ${i+1}</label>
-                        <div class="flex gap-2">
-                            <input type="text" placeholder="학생 이름" class="student-name-input flex-1 border border-slate-100 rounded-xl px-3 py-2 text-sm outline-none focus:border-orange-300 font-sans">
-                            <input type="text" list="roleOptions" placeholder="역할" class="student-role-input flex-1 border border-slate-100 rounded-xl px-3 py-2 text-sm outline-none focus:border-orange-300 font-sans"
-                                value="${userData.detectedRoles[i % userData.detectedRoles.length] || ''}">
-                        </div>
-                    </div>
-                `;
-            }
-            let datalist = document.getElementById('roleOptions') || document.createElement('datalist');
-            datalist.id = 'roleOptions';
-            document.body.appendChild(datalist);
-            datalist.innerHTML = userData.detectedRoles.map(r => `<option value="${r}">`).join('');
-        }
-
-        async function generateScript() {
-            const story = document.getElementById('storyInput').value;
-            const namesAndRoles = Array.from(document.querySelectorAll('.student-name-input')).map((n, i) => {
-                return { name: n.value || '학생'+(i+1), role: document.querySelectorAll('.student-role-input')[i].value || '역할' };
-            });
-            
-            goToStep(3);
-            document.getElementById('loadingArea').classList.remove('hidden');
-            document.getElementById('resultArea').classList.add('hidden');
-
-            const mapping = namesAndRoles.map(a => `${a.name}(배역: ${a.role})`).join(', ');
-
-            const systemPrompt = `당신은 초등학교 국어 교사입니다. 가독성이 아주 좋고 따뜻한 느낌의 연극 대본을 작성하세요.
-제공된 학생 명단과 배역을 정확히 사용하세요: ${mapping}
-
-[구성 지시]
-1. 대본 시작 전 [오늘의 출연진] 섹션을 만드세요.
-   형식: 🎭 오늘의 출연진\n- [배역 이름] : [학생 이름] 학생\n... (모든 학생 나열)
-2. 대본 본문의 대사 형식: [배역 이름] ([학생 이름]): "대사"
-3. 모든 학생의 대사 분량을 골고루 나누어 3~5분 분량으로 작성하세요.
-4. 초등학생 수준에 맞춰 따뜻하고 유쾌한 내용을 담으세요.
-5. 대본 형식: [제목], [장소], [해설], [배역]([이름]): 대사, (지문)`;
-
-            try {
-                const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `이야기 줄거리: ${story}` }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
-                });
-                const data = await response.json();
-                document.getElementById('scriptOutput').innerText = data.candidates[0].content.parts[0].text;
-                document.getElementById('loadingArea').classList.add('hidden');
-                document.getElementById('resultArea').classList.remove('hidden');
-            } catch (e) {
-                document.getElementById('loadingArea').classList.add('hidden');
-                alert("대본 생성에 실패했습니다.");
-                goToStep(2);
-            }
-        }
-
-        async function fetchWithRetry(url, options, retries = 5, backoff = 1000) {
-            try {
-                const res = await fetch(url, options);
-                if (!res.ok) throw new Error();
-                return res;
-            } catch (e) {
-                if (retries > 0) {
-                    await new Promise(r => setTimeout(r, backoff));
-                    return fetchWithRetry(url, options, retries - 1, backoff * 2);
+              },
+              lines: {
+                type: "ARRAY",
+                items: {
+                  type: "OBJECT",
+                  properties: {
+                    speaker: { type: "STRING", description: "해설, 인물 이름 등" },
+                    action: { type: "STRING", description: "행동 지문 (괄호 내용)" },
+                    text: { type: "STRING", description: "실제 말하는 대사" },
+                    stage: { type: "STRING", description: "갈등, 속마음, 화해 중 하나" }
+                  },
+                  required: ["speaker", "action", "text", "stage"]
                 }
-                throw e;
+              },
+              reflectionQuestions: {
+                type: "ARRAY",
+                items: { type: "STRING" }
+              },
+              teacherTip: { type: "STRING" }
+            },
+            required: ["title", "place", "characters", "lines", "reflectionQuestions"]
+          }
+        }
+      };
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error with status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const contentPart = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!contentPart) throw new Error("Empty candidate part");
+      return JSON.parse(contentPart);
+    }
+
+    // 오프라인/비상시에도 작동하는 튼튼한 교육용 템플릿 엔진
+    function generateOfflineScenario(data) {
+      const a = data.charA.name;
+      const b = data.charB.name;
+      const place = data.place;
+
+      return {
+        title: `${place}에서 일어난 마음의 매듭 풀기`,
+        place: place,
+        characters: [
+          {
+            name: a,
+            roleDesc: data.charA.trait || '자기 생각을 솔직하게 표현하는 친구',
+            startEmotion: '화남, 섭섭함 😡',
+            endEmotion: '후련함, 미안함 😊'
+          },
+          {
+            name: b,
+            roleDesc: data.charB.trait || '나름의 이유가 있었던 친구',
+            startEmotion: '당황함, 억울함 🥺',
+            endEmotion: '안도감, 고마움 🤝'
+          }
+        ],
+        lines: [
+          {
+            speaker: '해설',
+            action: '조용한 배경 음악이 흐르고, 두 친구가 서로 마주 보고 서 있다.',
+            text: `이곳은 ${place}. 평화로웠던 시간에 작은 오해가 생겨 ${a}와(과) ${b} 사이에 차가운 바람이 불기 시작했습니다.`,
+            stage: '갈등'
+          },
+          {
+            speaker: a,
+            action: '주먹을 살짝 쥐고 속상한 표정으로 쳐다보며',
+            text: `야, ${b}! 너 아까 왜 그랬어? (${data.conflictDesc}) 나 진짜 기분 나빴거든?`,
+            stage: '갈등'
+          },
+          {
+            speaker: b,
+            action: '깜짝 놀라며 억울한 듯 목소리를 높이며',
+            text: `뭐? 내가 뭘 어쨌다고 그래? 너야말로 나한테 왜 소리를 지르고 그래! 나도 다 이유가 있었다고!`,
+            stage: '갈등'
+          },
+          {
+            speaker: '해설',
+            action: '잠시 두 사람이 말을 멈추고 거친 숨을 고른다.',
+            text: `서로 화만 내다가는 문제가 풀리지 않는다는 걸 깨달은 두 사람. 심호흡을 세 번 하고, 상대방을 비난하는 대신 '나의 마음'을 전하기로 합니다.`,
+            stage: '속마음'
+          },
+          {
+            speaker: a,
+            action: '가슴에 한 손을 얹고 조금 차분해진 목소리로',
+            text: `하아... 소리 질러서 미안해. 하지만 네가 그럴 때, 나는 '${data.charA.wish || '내 마음을 무시당하는 것 같아서'}' 정말 속상했단 말이야.`,
+            stage: '속마음'
+          },
+          {
+            speaker: b,
+            action: '고개를 끄덕이며 조금 누그러진 눈빛으로',
+            text: `아... 네가 그렇게 느꼈구나. 사실 나는 '${data.charB.wish || '나쁜 뜻은 아니었고 다른 생각이 있었을 뿐이야'}'. 너를 일부러 속상하게 하려던 건 아니었어.`,
+            stage: '속마음'
+          },
+          {
+            speaker: a,
+            action: '살짝 미소를 지으며 손을 내밀며',
+            text: `그랬구나. 네 말을 들어보니까 내가 너무 내 생각만 하고 몰아세운 것 같아. 우리 앞으로는 ${data.endingStyle}처럼 해보는 거 어때?`,
+            stage: '화해'
+          },
+          {
+            speaker: b,
+            action: '내민 손을 반갑게 맞잡으며',
+            text: `응, 정말 좋아! 다음에는 오해가 생기기 전에 먼저 물어봐 줄게. 우리 이제 다시 기분 좋게 놀자!`,
+            stage: '화해'
+          },
+          {
+            speaker: '해설',
+            action: '두 친구가 어깨를 나란히 하고 밝게 웃으며 걸어 나간다.',
+            text: `서로의 다른 생각을 인정하고 마음을 나누자, 꽁꽁 얼어붙었던 갈등의 얼음이 봄눈 녹듯 사르르 녹아내렸습니다.`,
+            stage: '화해'
+          }
+        ],
+        reflectionQuestions: [
+          `만약 ${a}가 끝까지 화만 냈다면 이 상황은 어떻게 끝났을까요?`,
+          `내가 ${b}였다면 상대방이 나-전달법으로 이야기했을 때 어떤 기분이 들었을까요?`
+        ],
+        teacherTip: "학생들에게 '대사'를 말할 때 괄호 안의 '행동 지문'에 적힌 표정과 몸짓을 과장되게 표현해보도록 지도해주세요."
+      };
+    }
+
+    // 대본 화면 렌더링 함수
+    function renderScript(script) {
+      currentScriptData = script;
+
+      const emptyState = document.getElementById('empty-state');
+      const box = document.getElementById('script-content-box');
+      const display = document.getElementById('script-display');
+
+      emptyState.classList.add('hidden');
+      box.classList.remove('hidden');
+
+      // 스테이지별 뱃지 컬러 지정
+      const stageBadgeStyle = {
+        '갈등': 'bg-rose-100 text-rose-700 border-rose-200',
+        '속마음': 'bg-amber-100 text-amber-800 border-amber-200',
+        '화해': 'bg-emerald-100 text-emerald-800 border-emerald-200'
+      };
+
+      let html = `
+        <!-- 대본 헤더 -->
+        <div class="border-b-2 border-dashed border-amber-200 pb-3">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-xs mb-1.5">
+            <i class="fa-solid fa-location-dot"></i> 장소: ${escapeHtml(script.place)}
+          </div>
+          <h2 class="text-lg sm:text-xl font-extrabold text-slate-800 leading-snug">
+            🎬 ${escapeHtml(script.title)}
+          </h2>
+        </div>
+
+        <!-- 등장인물 소개 카드 -->
+        <div class="bg-amber-50/50 p-3 rounded-2xl border border-amber-100 space-y-1.5">
+          <div class="text-xs font-bold text-amber-900 flex items-center gap-1">
+            <i class="fa-solid fa-id-card-clip"></i> 등장인물 및 감정 변화
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            ${script.characters.map(c => `
+              <div class="bg-white p-2 rounded-xl border border-amber-200/60 shadow-2xs">
+                <div class="font-extrabold text-slate-800 flex items-center justify-between">
+                  <span>👤 ${escapeHtml(c.name)}</span>
+                  <span class="text-[11px] font-normal text-slate-500">${escapeHtml(c.roleDesc)}</span>
+                </div>
+                <div class="mt-1 text-[11px] text-slate-600 flex items-center gap-1">
+                  <span class="text-rose-600 font-medium">${escapeHtml(c.startEmotion)}</span>
+                  <i class="fa-solid fa-arrow-right text-[9px] text-slate-400"></i>
+                  <span class="text-emerald-600 font-medium">${escapeHtml(c.endEmotion)}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 대본 대사 목록 -->
+        <div class="space-y-3 pt-1">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">대본 흐름 (연기 시작!)</div>
+          ${script.lines.map((line, idx) => {
+            const isNarrator = line.speaker === '해설' || line.speaker === '나레이션';
+            const stageClass = stageBadgeStyle[line.stage] || 'bg-slate-100 text-slate-700 border-slate-200';
+
+            if (isNarrator) {
+              return `
+                <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 text-xs italic text-slate-600 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-700 not-italic flex items-center gap-1">
+                      <i class="fa-solid fa-volume-high text-slate-400"></i> [해설자]
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full border ${stageClass} not-italic font-bold">
+                      ${escapeHtml(line.stage)} 단계
+                    </span>
+                  </div>
+                  <p class="font-medium not-italic text-slate-700">${escapeHtml(line.text)}</p>
+                  ${line.action ? `<p class="text-[11px] text-slate-400">(행동: ${escapeHtml(line.action)})</p>` : ''}
+                </div>
+              `;
             }
-        }
 
-        function copyToClipboard() {
-            const text = document.getElementById('scriptOutput').innerText;
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("대본이 복사되었습니다!");
-        }
+            return `
+              <div class="p-3 bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:border-amber-300 transition-all space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-slate-800 text-xs flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                    ${escapeHtml(line.speaker)}
+                  </span>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full border ${stageClass} font-bold">
+                    ${escapeHtml(line.stage)}
+                  </span>
+                </div>
+                ${line.action ? `<p class="text-xs text-amber-700 font-medium">(${escapeHtml(line.action)})</p>` : ''}
+                <p class="text-sm font-bold text-slate-800 pl-1 leading-relaxed">
+                  "${escapeHtml(line.text)}"
+                </p>
+              </div>
+            `;
+          }).join('')}
+        </div>
 
-        function printScript() {
-            const content = document.getElementById('scriptOutput').innerText;
-            const win = window.open('', '', 'height=800,width=1000');
-            win.document.write(`
-                <html>
-                    <head>
-                        <title>우리들의 따뜻한 대본 출력</title>
-                        <style>
-                            @import url('https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap');
-                            body { 
-                                padding: 60px; 
-                                line-height: 1.8; 
-                                white-space: pre-wrap; 
-                                font-family: 'Nanum Pen Script', cursive; 
-                                font-size: 22pt;
-                                color: #333;
-                            }
-                            h1 { text-align: center; border-bottom: 2px solid #ed8936; padding-bottom: 20px; color: #ed8936; }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>🎬 우리들이 만드는 역할극 대본</h1>
-                        ${content}
-                    </body>
-                </html>
-            `);
-            win.document.close();
-            win.print();
+        <!-- 마무리 성찰 토의 질문 -->
+        ${script.reflectionQuestions && script.reflectionQuestions.length > 0 ? `
+          <div class="p-3.5 bg-emerald-50/70 rounded-2xl border border-emerald-100 mt-4 space-y-2">
+            <div class="text-xs font-bold text-emerald-800 flex items-center gap-1">
+              <i class="fa-solid fa-comments"></i> 역할극 후 다 함께 토의해볼 질문
+            </div>
+            <ul class="text-xs text-emerald-950 space-y-1 list-disc list-inside">
+              ${script.reflectionQuestions.map(q => `<li>${escapeHtml(q)}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      `;
+
+      display.innerHTML = html;
+      applyFontSize();
+    }
+
+    // 로딩 인디케이터 상태 토글
+    function setLoadingState(isLoading) {
+      const emptyState = document.getElementById('empty-state');
+      const loadingState = document.getElementById('loading-state');
+      const box = document.getElementById('script-content-box');
+      const btn = document.getElementById('btn-generate');
+
+      if (isLoading) {
+        emptyState.classList.add('hidden');
+        box.classList.add('hidden');
+        loadingState.classList.remove('hidden');
+        btn.disabled = true;
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+      } else {
+        loadingState.classList.add('hidden');
+        btn.disabled = false;
+        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+      }
+    }
+
+    // 로컬 스토리지에 대본 저장하기
+    function saveCurrentScript() {
+      if (!currentScriptData) return;
+
+      const scripts = getSavedScripts();
+      const newEntry = {
+        id: 'script_' + Date.now(),
+        createdAt: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        data: currentScriptData
+      };
+
+      scripts.unshift(newEntry);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(scripts));
+      updateSavedBadgeCount();
+      showToast('내 보관함에 안전하게 저장했어요! 📁', 'success');
+    }
+
+    // 로컬스토리지에서 목록 가져오기
+    function getSavedScripts() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        console.error('LocalStorage load error', e);
+        return [];
+      }
+    }
+
+    // 보관함 배지 개수 업데이트
+    function updateSavedBadgeCount() {
+      const count = getSavedScripts().length;
+      document.getElementById('saved-badge-count').innerText = count;
+    }
+
+    // 보관함 목록 렌더링
+    function renderSavedScriptsList() {
+      const container = document.getElementById('saved-scripts-list');
+      const scripts = getSavedScripts();
+      updateSavedBadgeCount();
+
+      if (scripts.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 space-y-3">
+            <div class="w-16 h-16 mx-auto rounded-3xl bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <p class="text-sm font-bold text-slate-600">아직 보관된 대본이 없어요.</p>
+            <p class="text-xs text-slate-400">대본을 만들고 [보관] 버튼을 누르면 여기에 차곡차곡 쌓여요.</p>
+            <button onclick="switchTab('create')" class="text-xs font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-4 py-2 rounded-xl transition-all">
+              대본 만들러 가기
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = scripts.map(item => `
+        <div class="p-4 rounded-2xl border border-slate-200 hover:border-amber-300 hover:shadow-sm bg-white transition-all flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+              <span><i class="fa-regular fa-clock"></i> ${escapeHtml(item.createdAt)}</span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 font-bold border border-amber-200/60">
+                ${escapeHtml(item.data.place)}
+              </span>
+            </div>
+            <h4 class="font-extrabold text-slate-800 text-sm sm:text-base line-clamp-1">
+              ${escapeHtml(item.data.title)}
+            </h4>
+            <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+              등장인물: ${item.data.characters.map(c => escapeHtml(c.name)).join(', ')}
+            </p>
+          </div>
+          
+          <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+            <button onclick="loadScriptToView('${item.id}')" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> 대본 열기
+            </button>
+            <button onclick="confirmDeleteScript('${item.id}')" class="text-xs text-rose-500 hover:text-rose-700 p-1">
+              <i class="fa-regular fa-trash-can"></i> 삭제
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 저장된 특정 대본 화면으로 불러오기
+    function loadScriptToView(id) {
+      const scripts = getSavedScripts();
+      const target = scripts.find(s => s.id === id);
+      if (target) {
+        renderScript(target.data);
+        switchTab('create');
+        showToast('보관함에서 대본을 불러왔어요!', 'info');
+      }
+    }
+
+    // 대본 삭제 확인 모달 띄우기
+    function confirmDeleteScript(id) {
+      openModal(
+        '정말 이 대본을 삭제할까요?',
+        '삭제하면 다시 불러올 수 없으니 신중하게 결정해주세요.',
+        () => {
+          let scripts = getSavedScripts();
+          scripts = scripts.filter(s => s.id !== id);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(scripts));
+          renderSavedScriptsList();
+          showToast('대본이 삭제되었습니다.', 'info');
         }
-    </script>
+      );
+    }
+
+    // 전체 보관함 비우기
+    function clearAllSavedScripts() {
+      const scripts = getSavedScripts();
+      if (scripts.length === 0) {
+        showToast('삭제할 대본이 없습니다.', 'info');
+        return;
+      }
+
+      openModal(
+        '보관함을 모두 비우시겠습니까?',
+        '저장된 모든 대본이 지워지며 이 작업은 되돌릴 수 없습니다.',
+        () => {
+          localStorage.removeItem(STORAGE_KEY);
+          renderSavedScriptsList();
+          showToast('보관함이 모두 비워졌습니다.', 'info');
+        }
+      );
+    }
+
+    // JSON 백업 파일로 내보내기 (교사 지도용 유용 기능)
+    function exportScriptsToJSON() {
+      const scripts = getSavedScripts();
+      if (scripts.length === 0) {
+        showToast('저장된 대본이 없어 내보낼 수 없습니다.', 'error');
+        return;
+      }
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scripts, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `갈등시나리오_대본모음_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('백업 파일이 다운로드되었습니다! 💾', 'success');
+    }
+
+    // 대본 텍스트 복사 (클립보드 API fallback 고려)
+    function copyScriptText() {
+      if (!currentScriptData) return;
+
+      let plainText = `[역할극 대본: ${currentScriptData.title}]\n장소: ${currentScriptData.place}\n\n`;
+      plainText += `[등장인물]\n`;
+      currentScriptData.characters.forEach(c => {
+        plainText += `- ${c.name}: ${c.roleDesc} (${c.startEmotion} -> ${c.endEmotion})\n`;
+      });
+      plainText += `\n[대본 내용]\n`;
+      currentScriptData.lines.forEach(l => {
+        plainText += `${l.speaker}${l.action ? ` (${l.action})` : ''}: "${l.text}"\n`;
+      });
+
+      if (currentScriptData.reflectionQuestions) {
+        plainText += `\n[토의 질문]\n`;
+        currentScriptData.reflectionQuestions.forEach((q, i) => {
+          plainText += `${i + 1}. ${q}\n`;
+        });
+      }
+
+      // iFrame 환경 호환을 위한 execCommand 방식 병행
+      const textarea = document.createElement('textarea');
+      textarea.value = plainText;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('대본 전체가 클립보드에 복사되었어요! 📋', 'success');
+      } catch (err) {
+        showToast('복사에 실패했습니다. 직접 드래그해주세요.', 'error');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // 글자 크기 확대/축소 기능
+    function changeFontSize(delta) {
+      currentFontSizeIndex = Math.max(0, Math.min(fontSizes.length - 1, currentFontSizeIndex + delta));
+      applyFontSize();
+    }
+
+    function applyFontSize() {
+      const display = document.getElementById('script-display');
+      if (!display) return;
+      fontSizes.forEach(size => display.classList.remove(size));
+      display.classList.add(fontSizes[currentFontSizeIndex]);
+    }
+
+    // HTML 태그 탈출 (XSS 방지)
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // 토스트 알림 표시 (alert 대체)
+    let toastTimeout = null;
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMessage.innerText = message;
+
+      if (type === 'success') {
+        toastIcon.className = 'fa-solid fa-circle-check text-emerald-400';
+      } else if (type === 'error') {
+        toastIcon.className = 'fa-solid fa-triangle-exclamation text-rose-400';
+      } else {
+        toastIcon.className = 'fa-solid fa-circle-info text-amber-400';
+      }
+
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 3000);
+    }
+
+    // 커스텀 모달 표시 (confirm 대체)
+    let modalConfirmCallback = null;
+    function openModal(title, desc, onConfirm) {
+      const modal = document.getElementById('custom-modal');
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      modalConfirmCallback = onConfirm;
+
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+      confirmBtn.onclick = () => {
+        if (modalConfirmCallback) modalConfirmCallback();
+        closeModal();
+      };
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('custom-modal');
+      modal.classList.add('hidden');
+      modalConfirmCallback = null;
+    }
+
+    // 창 로드시 초기화
+    window.onload = function () {
+      updateSavedBadgeCount();
+      updateCharCount();
+      // 기본 프리셋 하나를 초기 로드하여 학생들이 빈 화면에 당황하지 않도록 지원
+      applyPreset('soccer');
+    };
+  </script>
 </body>
 </html>
